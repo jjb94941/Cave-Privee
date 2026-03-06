@@ -1474,7 +1474,8 @@ async function authRegister() {
       action: 'notify_registration',
       new_user_email: email,
       cellar_type: cellarType,
-      owner_email: ownerEmail || null
+      owner_email: ownerEmail || null,
+      user_id: data.user.id
     })
   }).catch(() => {});
 
