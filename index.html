@@ -6,7 +6,6 @@
 <title>Cave Privée – Wine Cellar</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -20,8 +19,6 @@
 }
 body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--cream);color:var(--text-dark);min-height:100vh;font-size:18px}
 .app{max-width:900px;margin:0 auto;padding:0 14px 90px}
-
-/* ── Header ── */
 .header{background:linear-gradient(140deg,var(--bur-deep) 0%,var(--bur) 55%,var(--bur-light) 100%);margin:0 -14px 24px;padding:26px 22px 22px;position:relative;overflow:hidden}
 .header::before{content:'';position:absolute;top:-50px;right:-50px;width:220px;height:220px;border-radius:50%;background:rgba(201,168,76,.1)}
 .header::after{content:'';position:absolute;bottom:-80px;left:20%;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.03)}
@@ -33,23 +30,16 @@ body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--cream);colo
 .header-stats{display:flex;gap:22px;border-top:1px solid rgba(201,168,76,.2);padding-top:16px}
 .stat-num{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--gold);line-height:1}
 .stat-label{font-size:.8rem;color:rgba(245,239,230,.95);text-transform:uppercase;letter-spacing:.09em;font-weight:600}
-
-/* ── Tabs ── */
 .tabs{display:flex;gap:3px;margin-bottom:18px;background:var(--cream-dark);border-radius:var(--r);padding:4px}
 .tab{flex:1;padding:9px 4px;border:none;background:transparent;border-radius:10px;font-family:'Cormorant Garamond',serif;font-size:1rem;color:#3D1515;cursor:pointer;transition:all .2s;font-weight:700;letter-spacing:.02em}
 .tab.active{background:var(--bur);color:var(--cream);box-shadow:0 2px 8px rgba(107,26,42,.3)}
 .tab:disabled{opacity:.35;cursor:default}
-
-/* ── Search/Filter ── */
 .controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .search-box{flex:1;min-width:160px;padding:10px 13px;border:1.5px solid var(--cream-dark);border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:1rem;background:var(--white);color:var(--text-dark);outline:none;transition:border-color .2s}
 .search-box:focus{border-color:var(--bur)}
 .filter-sel{padding:10px 11px;border:1.5px solid var(--cream-dark);border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:.92rem;background:var(--white);color:var(--text-dark);cursor:pointer;outline:none}
-
-/* ── Wine Grid ── */
 .wine-grid{display:grid;gap:13px}
 @media(min-width:580px){.wine-grid{grid-template-columns:1fr 1fr}}
-
 .card{background:var(--white);border-radius:var(--rl);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;border:1.5px solid transparent;transition:transform .18s,box-shadow .18s}
 .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
 .card.sel{border-color:var(--bur)}
@@ -66,18 +56,12 @@ body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--cream);colo
 .card-foot{padding:9px 17px;background:var(--cream-mid);border-top:1px solid var(--cream-dark);display:flex;align-items:center;justify-content:space-between}
 .card-loc{font-size:.9rem;color:#3D1515;font-weight:600;display:flex;align-items:center;gap:4px}
 .card-qty{background:var(--bur);color:var(--cream);font-size:.82rem;padding:3px 9px;border-radius:20px}
-
-/* ── Empty ── */
 .empty{text-align:center;padding:52px 20px;color:var(--text-light)}
 .empty-icon{font-size:2.6rem;margin-bottom:12px;opacity:.4}
 .empty-title{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:7px;color:var(--text-mid)}
 .empty-sub{font-size:.9rem}
-
-/* ── FAB ── */
 .fab{position:fixed;bottom:22px;right:22px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--bur-light),var(--bur-deep));color:var(--cream);border:none;font-size:1.5rem;box-shadow:0 4px 20px rgba(107,26,42,.45);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .18s;z-index:100}
 .fab:hover{transform:scale(1.08)}
-
-/* ── Modal ── */
 .overlay{position:fixed;inset:0;background:rgba(28,14,14,.65);backdrop-filter:blur(4px);display:flex;align-items:flex-end;z-index:200;animation:fi .2s ease}
 @keyframes fi{from{opacity:0}to{opacity:1}}
 @media(min-width:580px){.overlay{align-items:center}}
@@ -86,8 +70,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--cream);colo
 @media(min-width:580px){.modal{border-radius:var(--rl);width:auto;min-width:460px;max-width:560px;margin:auto;animation:none}}
 .modal-handle{width:34px;height:4px;background:var(--cream-dark);border-radius:2px;margin:0 auto 18px;display:block}
 .modal-title{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--bur);margin-bottom:18px}
-
-/* ── Forms ── */
 .form-grid{display:grid;gap:13px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .fg{display:flex;flex-direction:column;gap:4px}
@@ -95,8 +77,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--cream);colo
 .fi,.fs,.ft{padding:10px 12px;border:1.5px solid var(--cream-dark);border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:1rem;background:var(--cream);color:var(--text-dark);outline:none;transition:border-color .2s;width:100%}
 .fi:focus,.fs:focus,.ft:focus{border-color:var(--bur);background:var(--white)}
 .ft{resize:vertical;min-height:70px}
-
-/* ── Buttons ── */
 .btn{padding:10px 20px;border:none;border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:1rem;cursor:pointer;font-weight:600;transition:all .18s;letter-spacing:.02em}
 .btn-p{background:linear-gradient(135deg,var(--bur-light),var(--bur-deep));color:var(--cream);box-shadow:0 3px 12px rgba(107,26,42,.32)}
 .btn-p:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 18px rgba(107,26,42,.42)}
@@ -106,8 +86,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--cream);colo
 .btn-sm{padding:6px 12px;font-size:.84rem}
 .btn-row{display:flex;gap:9px;margin-top:6px;flex-wrap:wrap}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-
-/* ── Detail ── */
 .det-hero{background:linear-gradient(135deg,var(--bur-deep),var(--bur));border-radius:var(--rl);padding:20px;margin-bottom:18px;color:var(--cream)}
 .det-varietal{font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(245,239,230,.9);margin-bottom:3px;font-weight:600}
 .det-winery{font-family:'Playfair Display',serif;font-size:1.65rem;margin-bottom:2px}
@@ -131,13 +109,10 @@ body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--cream);colo
 .dfl{color:#3D1515;font-weight:600}
 .dfv{color:#1A0A0A;font-weight:700;text-align:right;max-width:60%}
 .note-box{background:var(--cream);border-radius:var(--r);padding:12px;font-style:italic;color:#3D1515;border-left:3px solid var(--gold);font-size:1.05rem;line-height:1.6;font-weight:500}
-
-/* ── Import ── */
 .imp-panel{background:var(--white);border-radius:var(--rl);padding:24px;box-shadow:var(--shadow)}
 .imp-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--bur);margin-bottom:7px}
 .imp-sub{font-size:1rem;color:#3D1515;margin-bottom:20px;line-height:1.65;font-weight:500}
 .drop-zone{border:2px dashed var(--bur-light);border-radius:var(--rl);padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream);position:relative}
-.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
 .drop-zone:hover,.drop-zone.drag-over{border-color:var(--gold);background:rgba(201,168,76,.07)}
 .drop-icon{font-size:2.3rem;margin-bottom:10px;opacity:.6}
 .drop-text{font-size:.97rem;color:var(--text-mid);margin-bottom:5px}
@@ -160,98 +135,17 @@ tr:hover td{background:var(--cream)}
 .prog-bar{height:100%;background:linear-gradient(90deg,var(--bur),var(--bur-light));border-radius:4px;transition:width .25s}
 .imp-status{font-size:.84rem;color:var(--text-mid);margin-top:6px}
 .imp-success{background:#E8F5E9;border:1px solid #4CAF50;border-radius:var(--r);padding:12px 16px;color:#2E7D32;font-size:.91rem;margin-top:13px}
-.sql-box{margin-top:24px;padding:14px 16px;background:var(--cream);border-radius:var(--r);font-size:.81rem;color:#3D1515;font-weight:500;line-height:1.7}
-.sql-code{background:var(--cream-dark);padding:8px 10px;border-radius:6px;display:block;margin-top:7px;font-size:.76rem;white-space:pre;font-family:monospace;overflow-x:auto}
-
-/* ── Spinner ── */
 .spinner{display:inline-block;width:17px;height:17px;border:2px solid rgba(255,255,255,.28);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── Notice ── */
 .notice{background:linear-gradient(135deg,#FFF8E7,#FFF3D0);border:1.5px solid var(--gold);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;font-size:1rem;color:#4A3000;font-weight:500;line-height:1.6}
 .notice strong{color:#5A3D00}
-
-/* ── Sort buttons ── */
 .sort-btn{padding:10px 14px;border:2px solid var(--bur);border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:1.05rem;background:var(--white);color:#3D1515;cursor:pointer;transition:all .2s;text-align:center;font-weight:700}
 .sort-btn:hover{border-color:var(--bur);color:var(--bur);background:var(--cream)}
 .sort-btn.active{background:var(--bur);color:var(--cream);border-color:var(--bur);box-shadow:0 2px 8px rgba(107,26,42,.3)}
 </style>
 </head>
 <body>
-
-<!-- AUTH OVERLAY -->
-<div id="auth-overlay" style="display:none;position:fixed;inset:0;background:linear-gradient(140deg,#4A0F1C,#6B1A2A);z-index:1000;overflow-y:auto;padding:40px 20px">
-  <div style="max-width:420px;margin:0 auto">
-    <div style="text-align:center;margin-bottom:32px">
-      <div style="font-size:3rem;margin-bottom:8px">🍷</div>
-      <div style="font-family:'Playfair Display',serif;font-size:2rem;color:#F5EFE6;letter-spacing:.02em">Cave Privée</div>
-      <div style="font-size:.8rem;color:rgba(245,239,230,.6);text-transform:uppercase;letter-spacing:.14em">Personal Wine Cellar</div>
-    </div>
-
-    <!-- LOGIN FORM -->
-    <div id="auth-login" style="background:rgba(255,255,255,.08);border-radius:16px;padding:28px;backdrop-filter:blur(10px)">
-      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#F5EFE6;margin-bottom:20px">Sign In</div>
-      <input id="auth-email" type="email" placeholder="Email address" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#F5EFE6;font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:12px;outline:none;box-sizing:border-box" oninput="this.style.borderColor='rgba(255,255,255,.4)'" placeholder="Email address"/>
-      <input id="auth-password" type="password" placeholder="Password" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#F5EFE6;font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:16px;outline:none;box-sizing:border-box"/>
-      <button onclick="authSignIn()" style="width:100%;padding:13px;background:linear-gradient(135deg,#C9A84C,#A87C2A);color:#2D1A1A;border:none;border-radius:10px;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;cursor:pointer;margin-bottom:12px">Sign In</button>
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <button onclick="showAuthPanel('register')" style="background:none;border:none;color:rgba(245,239,230,.7);font-family:'Cormorant Garamond',serif;font-size:.95rem;cursor:pointer;text-decoration:underline">Create account</button>
-        <button onclick="showAuthPanel('forgot')" style="background:none;border:none;color:rgba(245,239,230,.7);font-family:'Cormorant Garamond',serif;font-size:.95rem;cursor:pointer;text-decoration:underline">Forgot password?</button>
-      </div>
-      <div id="auth-login-msg" style="margin-top:12px;font-size:.9rem;color:#FFB3B3;text-align:center"></div>
-    </div>
-
-    <!-- REGISTER FORM -->
-    <div id="auth-register" style="display:none;background:rgba(255,255,255,.08);border-radius:16px;padding:28px;backdrop-filter:blur(10px)">
-      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#F5EFE6;margin-bottom:20px">Create Account</div>
-      <input id="reg-email" type="email" placeholder="Email address" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#F5EFE6;font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:12px;outline:none;box-sizing:border-box"/>
-      <input id="reg-password" type="password" placeholder="Password (min 8 characters)" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#F5EFE6;font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:16px;outline:none;box-sizing:border-box"/>
-      <div style="font-family:'Playfair Display',serif;font-size:1rem;color:#F5EFE6;margin-bottom:12px">Cellar access:</div>
-      <label style="display:flex;align-items:center;gap:10px;color:rgba(245,239,230,.85);font-family:'Cormorant Garamond',serif;font-size:1rem;margin-bottom:10px;cursor:pointer">
-        <input type="radio" name="cellar-type" value="own" checked onchange="toggleCellarType(this.value)" style="accent-color:#C9A84C;width:16px;height:16px"/> Create my own cellar
-      </label>
-      <label style="display:flex;align-items:center;gap:10px;color:rgba(245,239,230,.85);font-family:'Cormorant Garamond',serif;font-size:1rem;margin-bottom:14px;cursor:pointer">
-        <input type="radio" name="cellar-type" value="join" onchange="toggleCellarType(this.value)" style="accent-color:#C9A84C;width:16px;height:16px"/> Join an existing cellar
-      </label>
-      <div id="join-cellar-section" style="display:none;margin-bottom:14px">
-        <input id="reg-owner-email" type="email" placeholder="Owner's email address" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#F5EFE6;font-family:'Cormorant Garamond',serif;font-size:1.05rem;outline:none;box-sizing:border-box"/>
-        <div style="font-size:.82rem;color:rgba(245,239,230,.5);margin-top:6px">The owner will receive an email to approve your request.</div>
-      </div>
-      <button onclick="authRegister()" style="width:100%;padding:13px;background:linear-gradient(135deg,#C9A84C,#A87C2A);color:#2D1A1A;border:none;border-radius:10px;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;cursor:pointer;margin-bottom:12px">Request Account</button>
-      <button onclick="showAuthPanel('login')" style="background:none;border:none;color:rgba(245,239,230,.7);font-family:'Cormorant Garamond',serif;font-size:.95rem;cursor:pointer;text-decoration:underline">Back to sign in</button>
-      <div id="auth-reg-msg" style="margin-top:12px;font-size:.9rem;color:#FFB3B3;text-align:center"></div>
-    </div>
-
-    <!-- FORGOT PASSWORD FORM -->
-    <div id="auth-forgot" style="display:none;background:rgba(255,255,255,.08);border-radius:16px;padding:28px;backdrop-filter:blur(10px)">
-      <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#F5EFE6;margin-bottom:12px">Reset Password</div>
-      <div style="font-size:.95rem;color:rgba(245,239,230,.7);margin-bottom:16px">Enter your email and we will send you a reset link.</div>
-      <input id="forgot-email" type="email" placeholder="Email address" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#F5EFE6;font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:16px;outline:none;box-sizing:border-box"/>
-      <button onclick="authForgotPassword()" style="width:100%;padding:13px;background:linear-gradient(135deg,#C9A84C,#A87C2A);color:#2D1A1A;border:none;border-radius:10px;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;cursor:pointer;margin-bottom:12px">Send Reset Link</button>
-      <button onclick="showAuthPanel('login')" style="background:none;border:none;color:rgba(245,239,230,.7);font-family:'Cormorant Garamond',serif;font-size:.95rem;cursor:pointer;text-decoration:underline">Back to sign in</button>
-      <div id="auth-forgot-msg" style="margin-top:12px;font-size:.9rem;color:#B3FFB3;text-align:center"></div>
-    </div>
-
-    <!-- PENDING APPROVAL -->
-    <div id="auth-pending" style="display:none;background:rgba(255,255,255,.08);border-radius:16px;padding:28px;backdrop-filter:blur(10px);text-align:center">
-      <div style="font-size:2.5rem;margin-bottom:12px">⏳</div>
-      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#F5EFE6;margin-bottom:10px">Awaiting Approval</div>
-      <div style="font-size:.95rem;color:rgba(245,239,230,.7);line-height:1.6" id="auth-pending-msg">Your account request has been sent. You will receive an email once approved.</div>
-      <button onclick="showAuthPanel('login')" style="margin-top:20px;background:none;border:1.5px solid rgba(255,255,255,.3);color:#F5EFE6;padding:10px 24px;border-radius:10px;font-family:'Cormorant Garamond',serif;font-size:1rem;cursor:pointer">Back to Sign In</button>
-    </div>
-
-  </div>
-</div>
-
-<!-- USER BAR (shown when logged in) -->
-<div id="user-bar" style="display:none;background:rgba(74,15,28,.85);padding:8px 16px;display:none;align-items:center;justify-content:space-between;font-family:'Cormorant Garamond',serif;font-size:.9rem;color:rgba(245,239,230,.8);backdrop-filter:blur(4px)">
-  <span id="user-bar-email"></span>
-  <button onclick="authSignOut()" style="background:none;border:1.5px solid rgba(245,239,230,.3);color:rgba(245,239,230,.8);padding:4px 12px;border-radius:8px;font-family:'Cormorant Garamond',serif;font-size:.85rem;cursor:pointer">Sign Out</button>
-</div>
-
 <div class="app" id="app">
-
-  <!-- Header -->
   <div class="header">
     <div class="header-inner">
       <div class="logo">
@@ -270,13 +164,8 @@ tr:hover td{background:var(--cream)}
     </div>
   </div>
 
-  <!-- Notice -->
-  <div class="notice" id="storage-notice">
-    <strong>📦 Local storage mode</strong> — Your wines are saved in this browser. 
-    Data persists between sessions. Works on desktop, iPhone &amp; Android.
-  </div>
+  <div class="notice" id="sync-notice"><strong>☁️ Loading from Google Sheets…</strong></div>
 
-  <!-- Tabs -->
   <div class="tabs">
     <button class="tab active" onclick="switchTab('cellar')">🗄 Cellar</button>
     <button class="tab" id="tab-detail" onclick="switchTab('detail')" disabled>📋 Detail</button>
@@ -303,22 +192,18 @@ tr:hover td{background:var(--cream)}
   <div id="view-search" style="display:none">
     <div class="imp-panel">
       <div class="imp-title">🔍 Advanced Search</div>
-      <div class="imp-sub" style="margin-bottom:16px">Filter your cellar by any combination of fields. Leave blank to match all.</div>
-
+      <div class="imp-sub" style="margin-bottom:16px">Filter your cellar by any combination of fields.</div>
       <div style="display:grid;gap:14px">
-
         <div>
           <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Winery</label>
           <input class="search-box" id="s-winery" placeholder="e.g. Williams Selyem" oninput="runAdvSearch()" style="width:100%"/>
         </div>
-
         <div>
           <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Varietal</label>
           <select class="filter-sel" id="s-varietal" onchange="runAdvSearch()" style="width:100%">
             <option value="">All varietals</option>
           </select>
         </div>
-
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
             <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Vintage from</label>
@@ -329,7 +214,6 @@ tr:hover td{background:var(--cream)}
             <input class="search-box" id="s-vintage-max" type="number" placeholder="e.g. 2020" oninput="runAdvSearch()" style="width:100%"/>
           </div>
         </div>
-
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
             <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Can drink from</label>
@@ -340,7 +224,6 @@ tr:hover td{background:var(--cream)}
             <input class="search-box" id="s-candrink-max" type="number" placeholder="e.g. 2027" oninput="runAdvSearch()" style="width:100%"/>
           </div>
         </div>
-
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
             <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Drink by from</label>
@@ -351,14 +234,11 @@ tr:hover td{background:var(--cream)}
             <input class="search-box" id="s-drinkby-max" type="number" placeholder="e.g. 2030" oninput="runAdvSearch()" style="width:100%"/>
           </div>
         </div>
-
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <button class="btn btn-p" onclick="runAdvSearch()" style="flex:1">🔍 Search</button>
           <button class="btn btn-s" onclick="clearAdvSearch()" style="flex:1">✕ Clear</button>
         </div>
-
       </div>
-
       <div id="search-results-count" style="margin-top:20px;font-size:.85rem;color:var(--text-light);display:none"></div>
       <div class="wine-grid" id="search-results-grid" style="margin-top:14px"></div>
     </div>
@@ -369,9 +249,7 @@ tr:hover td{background:var(--cream)}
     <div class="imp-panel">
       <div class="imp-title">↕ Sort Cellar</div>
       <div class="imp-sub" style="margin-bottom:20px">Choose a field and direction to sort your entire cellar.</div>
-
       <div style="display:grid;gap:12px">
-
         <div>
           <label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.09em;color:var(--text-dark);font-weight:600;display:block;margin-bottom:8px">Sort by</label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
@@ -384,7 +262,6 @@ tr:hover td{background:var(--cream)}
             <button class="sort-btn" id="sort-location" onclick="setSortField('location')">📦 Location</button>
           </div>
         </div>
-
         <div>
           <label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.09em;color:var(--text-dark);font-weight:600;display:block;margin-bottom:8px">Direction</label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
@@ -392,68 +269,40 @@ tr:hover td{background:var(--cream)}
             <button class="sort-btn" id="sort-dir-desc" onclick="setSortDir('desc')">↓ Descending</button>
           </div>
         </div>
-
         <div id="sort-summary" style="background:var(--cream);border-radius:var(--r);padding:12px 16px;font-size:.88rem;color:var(--text-mid);border-left:3px solid var(--gold)"></div>
-
       </div>
-
       <div class="wine-grid" id="sort-results-grid" style="margin-top:20px"></div>
     </div>
   </div>
 
   <!-- IMPORT TAB -->
   <div id="view-import" style="display:none">
-
-    <!-- Export Section -->
     <div class="imp-panel" style="margin-bottom:18px">
-      <div class="imp-title">&#x1F4E4; Export Cellar</div>
-      <div class="imp-sub">Download your entire cellar as a CSV file, compatible with Excel and Google Sheets.</div>
-      <button class="btn btn-p" onclick="exportCSV()" style="width:100%;font-size:1rem">&#x2B07;&#xFE0F; Download CSV</button>
+      <div class="imp-title">📤 Export Cellar</div>
+      <div class="imp-sub">Download your entire cellar as a CSV file.</div>
+      <button class="btn btn-p" onclick="exportCSV()" style="width:100%;font-size:1rem">⬇️ Download CSV</button>
     </div>
-
+    <div class="imp-panel" style="margin-bottom:18px">
+      <div class="imp-title">☁️ Google Sheets Sync</div>
+      <div class="imp-sub">Your cellar is stored in Google Sheets and syncs automatically on every change.</div>
+      <button class="btn btn-p" onclick="syncFromSheets()" style="width:100%;font-size:1rem">🔄 Reload from Google Sheets</button>
+    </div>
     <div class="imp-panel">
-      <div class="imp-title">Import from Spreadsheet</div>
-      <div class="imp-sub">
-        Upload your <strong>CSV or Excel file</strong>. The importer auto-detects your columns:<br>
-        <em>Winery · Varietal · Vineyard · Year · Location · Can Drink · Drink By · Qty · Score</em><br><br>
-        <strong>From Google Sheets:</strong> File → Download → Comma Separated Values (.csv)
-      </div>
-      <!-- Hidden file input - mobile friendly approach -->
+      <div class="imp-title">📥 Import from Spreadsheet</div>
+      <div class="imp-sub">Upload a CSV or Excel file to import wines.</div>
       <input type="file" id="file-input" accept=".csv,.xlsx,.xlsm,.xls" style="display:none" onchange="handleFileInput(event)"/>
       <div id="drop-area" class="drop-zone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)">
         <div class="drop-icon">📂</div>
         <div class="drop-text">Tap the button below to select your file</div>
-        <div class="drop-hint">Supports .csv · .xlsx · .xlsm — your Wine file works directly</div>
+        <div class="drop-hint">Supports .csv · .xlsx · .xlsm</div>
         <button class="btn btn-p" style="margin-top:16px;font-size:1.1rem;padding:14px 28px" onclick="document.getElementById('file-input').click()">📁 Choose File</button>
       </div>
       <div id="import-preview-area"></div>
-      <div class="sql-box">
-        <strong style="color:var(--text-dark)">☁️ Enable Cloud Sync (free):</strong><br>
-        1. Go to <strong>supabase.com</strong> → New project (free tier)<br>
-        2. In SQL Editor, run:<br>
-        <code class="sql-code">create table wines (id text primary key, data jsonb, updated_at timestamptz default now());
-alter table wines enable row level security;
-create policy "public" on wines for all using (true);</code>
-        3. Copy your <strong>Project URL</strong> and <strong>anon key</strong> from Settings → API<br>
-        4. Open wine-cellar-v2.html in a text editor, paste them into <code>SUPABASE_URL</code> and <code>SUPABASE_KEY</code> near the top of the &lt;script&gt; section<br><br>
-        Once set up, all changes sync automatically and your cellar works on every device.
-      </div>
-      <div id="cloud-sync-section" style="display:none;margin-top:16px">
-        <div style="background:linear-gradient(135deg,#E8F5E9,#F1F8E9);border:1.5px solid #4CAF50;border-radius:12px;padding:16px 18px">
-          <div style="font-size:.88rem;font-weight:600;color:#2E7D32;margin-bottom:8px">☁️ Cloud sync is configured</div>
-          <div style="font-size:.83rem;color:#388E3C;margin-bottom:12px;line-height:1.5">
-            Your cellar syncs automatically on every change. Use this button to do a manual push if needed.
-          </div>
-          <button class="btn btn-p" onclick="pushToCloud()" style="width:100%;font-size:1rem">☁️ Push All Data to Cloud Now</button>
-        </div>
-      </div>
     </div>
   </div>
 
-  <!-- FAB -->
   <button class="fab" onclick="openAddModal()" title="Add wine">＋</button>
 
-  <!-- Modal -->
   <div class="overlay" id="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
     <div class="modal">
       <span class="modal-handle"></span>
@@ -499,116 +348,89 @@ create policy "public" on wines for all using (true);</code>
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
+// ── Config ─────────────────────────────────────────────────────────────────
+const SHEETS_API = 'https://script.google.com/macros/s/AKfycbyUQ3j3pQciQI_YUfNJd4_jAk9eBO4v1rkSPybSWKDECMkPr6IMXQCCHSsm0y0hWqVI/exec';
+const CF_WORKER  = 'https://cave-privee-ai.jjb94941.workers.dev';
+
 // ── State ──────────────────────────────────────────────────────────────────
 let wines = [];
 let selectedWineId = null;
-let editingWineId = null;
+let editingWineId  = null;
 let insights = {};
 let importPreviewWines = null;
 let importMode = 'append';
+let saveTimer = null;
 
 const YEAR = new Date().getFullYear();
 
-// ── Storage ────────────────────────────────────────────────────────────────
-// ── Pre-loaded wine data from your PDF ────────────────────────────────────
-const PRELOADED_WINES = [{"id":"1","winery":"Nelson","varietal":"Port","vineyard":"Estate","vintage":1998,"location":"C-2-2","can_drink":2002,"drink_by":2009,"quantity":1,"score":null,"notes":""},{"id":"2","winery":"Benziger","varietal":"Muscat Canelli","vineyard":"Bartolucci Vin","vintage":2001,"location":"A-2-1","can_drink":2011,"drink_by":2011,"quantity":1,"score":null,"notes":""},{"id":"3","winery":"Carruades De Lafite","varietal":"Bordeaux Blend","vineyard":"","vintage":2000,"location":"B-5-3","can_drink":2007,"drink_by":2013,"quantity":1,"score":null,"notes":""},{"id":"4","winery":"Meridian","varietal":"Johannesberg Riesling","vineyard":"Late Harvest","vintage":2002,"location":"I11","can_drink":2006,"drink_by":2013,"quantity":1,"score":null,"notes":""},{"id":"5","winery":"Framboise","varietal":"Sweet","vineyard":"Bonny Doon","vintage":2010,"location":"F21","can_drink":2010,"drink_by":2015,"quantity":1,"score":null,"notes":""},{"id":"6","winery":"Gregory Graham","varietal":"Dessert Zinfandel","vineyard":"","vintage":2007,"location":"A-2-1","can_drink":2011,"drink_by":2018,"quantity":1,"score":null,"notes":""},{"id":"7","winery":"Brassfield","varietal":"Dessert Zinfandel","vineyard":"","vintage":2005,"location":"C-3-2","can_drink":2009,"drink_by":2018,"quantity":1,"score":null,"notes":""},{"id":"8","winery":"Imagery","varietal":"Port","vineyard":"","vintage":2008,"location":"K38","can_drink":2013,"drink_by":2019,"quantity":1,"score":null,"notes":""},{"id":"9","winery":"Vigilance","varietal":"Red Blend","vineyard":"Non-Typical","vintage":2009,"location":"C-1-2","can_drink":2014,"drink_by":2020,"quantity":1,"score":null,"notes":""},{"id":"10","winery":"Jalama","varietal":"Grenache","vineyard":"La Presa","vintage":2010,"location":"B-4-2","can_drink":2015,"drink_by":2021,"quantity":1,"score":null,"notes":""},{"id":"11","winery":"Crooked Path","varietal":"Zinfandel","vineyard":"Paso Robles","vintage":2010,"location":"C-2-1","can_drink":2016,"drink_by":2021,"quantity":1,"score":null,"notes":""},{"id":"12","winery":"Copain","varietal":"Pinot Noir","vineyard":"Tout Ensemble","vintage":2011,"location":"C-4-3","can_drink":2021,"drink_by":2021,"quantity":1,"score":null,"notes":""},{"id":"13","winery":"Vigilance","varietal":"Red Blend","vineyard":"Cimmaron","vintage":2010,"location":"D-1-2","can_drink":2015,"drink_by":2021,"quantity":3,"score":null,"notes":""},{"id":"14","winery":"Chacewater","varietal":"Zinfandel","vineyard":"Sierra Foothills","vintage":2010,"location":"D-2-1","can_drink":2016,"drink_by":2021,"quantity":4,"score":null,"notes":""},{"id":"15","winery":"E11Even","varietal":"Pinot Noir","vineyard":"","vintage":2012,"location":"D-5-2","can_drink":2016,"drink_by":2021,"quantity":3,"score":null,"notes":""},{"id":"16","winery":"Jalama","varietal":"Grenache","vineyard":"Santa Ynez Valley","vintage":2010,"location":"H15","can_drink":2015,"drink_by":2021,"quantity":1,"score":null,"notes":""},{"id":"17","winery":"Murphy Goode","varietal":"Cabernet Sauvignon","vineyard":"Dealers Choice","vintage":2010,"location":"H32","can_drink":2015,"drink_by":2021,"quantity":1,"score":null,"notes":""},{"id":"18","winery":"Signaterra","varietal":"Pinot Noir","vineyard":"La Reina","vintage":2013,"location":"A-2-2","can_drink":2017,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"19","winery":"Hafner","varietal":"Red Blend","vineyard":"Next Red","vintage":2011,"location":"A-3-1","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"20","winery":"Hafner","varietal":"Cabernet Sauvignon","vineyard":"","vintage":2009,"location":"A-3-3","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"21","winery":"Rosenberg","varietal":"Zinfandel","vineyard":"Porky's Block","vintage":2011,"location":"A-4-3","can_drink":2017,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"22","winery":"Hafner","varietal":"Cabernet Sauvignon","vineyard":"Alexander Valley","vintage":2011,"location":"A-5-1","can_drink":2016,"drink_by":2022,"quantity":2,"score":null,"notes":""},{"id":"23","winery":"Herman Story","varietal":"Syrah","vineyard":"John Sebastian","vintage":2013,"location":"A-5-1","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"24","winery":"Gainey","varietal":"Cabernet Franc","vineyard":"Santa Ynez Valley","vintage":2011,"location":"B-3-2","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"25","winery":"Frank Family","varietal":"Petite Syrah","vineyard":"Chiles Valley","vintage":2011,"location":"B-3-2","can_drink":2016,"drink_by":2022,"quantity":2,"score":null,"notes":""},{"id":"26","winery":"Herman Story","varietal":"Red Blend","vineyard":"Casual Encounter","vintage":2011,"location":"D-1-1","can_drink":2016,"drink_by":2022,"quantity":5,"score":null,"notes":""},{"id":"27","winery":"Signaterra","varietal":"Cabernet Sauvignon","vineyard":"3 Blocks","vintage":2009,"location":"D-3-1","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"28","winery":"St. Francis","varietal":"Merlot","vineyard":"Behler","vintage":2013,"location":"D-3-1","can_drink":2018,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"29","winery":"Philip Staley","varietal":"Bordeaux Blend","vineyard":"El Dorado","vintage":2011,"location":"D-3-3","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"30","winery":"Hafner","varietal":"Red Blend","vineyard":"Next Red","vintage":2011,"location":"D-4-2","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"31","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Bucher","vintage":2013,"location":"I27","can_drink":2017,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"32","winery":"Chacewater","varietal":"Cabernet Sauvignon","vineyard":"Sierra Foothills","vintage":2011,"location":"J21","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"33","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Allen","vintage":2013,"location":"J24","can_drink":2017,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"34","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Caligari","vintage":2013,"location":"J45-46","can_drink":2017,"drink_by":2022,"quantity":2,"score":null,"notes":""},{"id":"35","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Weir","vintage":2013,"location":"K31-32","can_drink":2017,"drink_by":2022,"quantity":2,"score":null,"notes":""},{"id":"36","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Vista Verde","vintage":2013,"location":"K33-34","can_drink":2017,"drink_by":2022,"quantity":2,"score":null,"notes":""},{"id":"37","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Ferrington","vintage":2013,"location":"K35-36","can_drink":2017,"drink_by":2022,"quantity":2,"score":null,"notes":""},{"id":"38","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Hirsch","vintage":2013,"location":"K37","can_drink":2017,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"39","winery":"Frank Family","varietal":"Zinfandel","vineyard":"Chiles Valley","vintage":2011,"location":"K47-48","can_drink":2017,"drink_by":2022,"quantity":2,"score":null,"notes":""},{"id":"40","winery":"Rosenberg","varietal":"Zinfandel","vineyard":"Porky's Block","vintage":2011,"location":"M24","can_drink":2017,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"41","winery":"Jalama","varietal":"Grenache","vineyard":"La Presa","vintage":2011,"location":"N28","can_drink":2016,"drink_by":2022,"quantity":1,"score":null,"notes":""},{"id":"42","winery":"Wren Hop","varietal":"Pinot Noir","vineyard":"Daughters Of","vintage":2012,"location":"A-2-1","can_drink":2016,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"43","winery":"Benziger","varietal":"Red Blend","vineyard":"Solstice Blend","vintage":2012,"location":"A-3-1","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"44","winery":"Frank Family","varietal":"Cabernet Sauvignon","vineyard":"Napa Valley","vintage":2012,"location":"A-4-1","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"45","winery":"Frank Family","varietal":"Zinfandel","vineyard":"Chiles Valley","vintage":2012,"location":"A-5-1","can_drink":2018,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"46","winery":"Frank Family","varietal":"Cabernet Sauvignon","vineyard":"Rutherford Reserve","vintage":2012,"location":"A-5-2","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"47","winery":"Three Lab Cab","varietal":"Cabernet Sauvignon","vineyard":"Larson Family","vintage":2010,"location":"B-2-3","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"48","winery":"Signaterra","varietal":"Pinot Noir","vineyard":"San Remo","vintage":2012,"location":"B-2-3","can_drink":2016,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"49","winery":"Gloria Ferrer","varietal":"Pinot Noir","vineyard":"Gravel Knob","vintage":2012,"location":"B-4-1","can_drink":2016,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"50","winery":"Herman Story","varietal":"Red Blend","vineyard":"Casual Encounter","vintage":2014,"location":"B-4-2","can_drink":2018,"drink_by":2023,"quantity":2,"score":null,"notes":""},{"id":"51","winery":"Groot Constantia","varietal":"Red Blend","vineyard":"Gouverneurs","vintage":2016,"location":"B-4-3","can_drink":2019,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"52","winery":"Hafner","varietal":"Cabernet Sauvignon","vineyard":"","vintage":2010,"location":"B-5-1","can_drink":2017,"drink_by":2023,"quantity":2,"score":null,"notes":""},{"id":"53","winery":"Benziger","varietal":"Red Blend","vineyard":"Oonapais","vintage":2012,"location":"B-5-1","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"54","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"The Loch","vintage":2017,"location":"B-5-2","can_drink":2018,"drink_by":2023,"quantity":2,"score":null,"notes":""},{"id":"55","winery":"Benziger","varietal":"Pinot Noir","vineyard":"Russian River","vintage":2012,"location":"C-3-3","can_drink":2016,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"56","winery":"Benziger","varietal":"Red Blend","vineyard":"Oonopais","vintage":2010,"location":"C-5-1","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"57","winery":"Gloria Ferrer","varietal":"Pinot Noir","vineyard":"Rust Rock Terrace","vintage":2012,"location":"D-2-1","can_drink":2016,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"58","winery":"De Coelo","varietal":"Pinot Noir","vineyard":"Arbore Sacra","vintage":2012,"location":"D-3-1","can_drink":2016,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"59","winery":"Ledson","varietal":"Cabernet Sauvignon","vineyard":"Howell Mountain","vintage":2010,"location":"D-3-2","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"60","winery":"The Big Easy","varietal":"Red Blend","vineyard":"","vintage":2010,"location":"D-3-3","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"61","winery":"Benziger","varietal":"Pinot Noir","vineyard":"Dragonsleaf","vintage":2012,"location":"D-4-1","can_drink":2016,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"62","winery":"Signaterra","varietal":"Cabernet Sauvignon","vineyard":"3 Blocks","vintage":2012,"location":"F27","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"63","winery":"Paoletti","varietal":"Cab/Syrah","vineyard":"Attilio's","vintage":2012,"location":"I48","can_drink":2017,"drink_by":2023,"quantity":1,"score":null,"notes":""},{"id":"64","winery":"Frank Family","varietal":"Petite Syrah","vineyard":"Reserve","vintage":2012,"location":"L27-28","can_drink":2017,"drink_by":2023,"quantity":2,"score":null,"notes":""},{"id":"65","winery":"Williams Selyem","varietal":"Zinfandel","vineyard":"Papera","vintage":2012,"location":"M21-22","can_drink":2018,"drink_by":2023,"quantity":2,"score":null,"notes":""},{"id":"66","winery":"Truett-Hurst","varietal":"Pinot Noir","vineyard":"Black Sheep","vintage":2013,"location":"A-2-2","can_drink":2017,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"67","winery":"Chacewater","varietal":"Red Blend","vineyard":"Sierra Foothills","vintage":2013,"location":"A-2-2","can_drink":2018,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"68","winery":"Triumph Cellars","varietal":"Zinfandel","vineyard":"Napa Valley","vintage":2011,"location":"A-2-3","can_drink":2018,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"69","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Central Coast","vintage":2013,"location":"A-3-2","can_drink":2017,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"70","winery":"Gloria Ferrer","varietal":"Pinot Noir","vineyard":"Gravel Knob","vintage":2018,"location":"B-2-1","can_drink":2024,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"71","winery":"J","varietal":"Pinot Noir","vineyard":"Eastside Knoll","vintage":2017,"location":"B-2-1","can_drink":2023,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"72","winery":"Ten Acre","varietal":"Pinot Noir","vineyard":"Russian River","vintage":2017,"location":"B-2-1","can_drink":2023,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"73","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Rodgers Creek","vintage":2019,"location":"B-2-2","can_drink":2025,"drink_by":2024,"quantity":2,"score":null,"notes":""},{"id":"74","winery":"Hafner","varietal":"Red Blend","vineyard":"Next Red","vintage":2011,"location":"B-2-2","can_drink":2018,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"75","winery":"St. Francis","varietal":"Merlot","vineyard":"Behler","vintage":2015,"location":"B-2-3","can_drink":2020,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"76","winery":"Gloria Ferrer","varietal":"Pinot Noir","vineyard":"Gravel Knob","vintage":2013,"location":"B-3-1","can_drink":2017,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"77","winery":"Privada","varietal":"Red Blend","vineyard":"","vintage":2016,"location":"B-3-1","can_drink":2022,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"78","winery":"Windvane","varietal":"Pinot Noir","vineyard":"Carneros","vintage":2017,"location":"B-3-2","can_drink":2023,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"79","winery":"Old School","varietal":"Pinot Noir","vineyard":"Adastra","vintage":2017,"location":"B-4-1","can_drink":2023,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"80","winery":"Herman Story","varietal":"Red Blend","vineyard":"Milk & Honey","vintage":2014,"location":"B-4-2","can_drink":2021,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"81","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Thale's","vintage":2018,"location":"C-2-1","can_drink":2024,"drink_by":2024,"quantity":2,"score":null,"notes":""},{"id":"82","winery":"Signaterra","varietal":"Red Blend","vineyard":"Etta's Blend","vintage":2011,"location":"C-2-1","can_drink":2018,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"83","winery":"Herman Story","varietal":"Grenache","vineyard":"On the Road","vintage":2014,"location":"D-3-1","can_drink":2020,"drink_by":2024,"quantity":2,"score":null,"notes":""},{"id":"84","winery":"Benziger","varietal":"Red Blend","vineyard":"Solstice Blend","vintage":2011,"location":"D-3-1","can_drink":2018,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"85","winery":"Benziger","varietal":"Cabernet Sauvignon","vineyard":"Calabassas Canyon","vintage":2011,"location":"D-3-2","can_drink":2018,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"86","winery":"Chacewater","varietal":"Zinfandel","vineyard":"Sierra Foothills","vintage":2013,"location":"M27","can_drink":2019,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"87","winery":"Crane Brothers","varietal":"Syrah Dessert wine","vineyard":"Bromance","vintage":2015,"location":"A-2-2","can_drink":2015,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"88","winery":"Donelan","varietal":"Pinot Noir","vineyard":"Two Brothers","vintage":2014,"location":"A-3-1","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"89","winery":"Hafner","varietal":"Red Blend","vineyard":"Next Red","vintage":2012,"location":"A-3-2","can_drink":2019,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"90","winery":"Signaterra","varietal":"Merlot","vineyard":"Etta's","vintage":2016,"location":"A-3-3","can_drink":2021,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"91","winery":"Herman Story","varietal":"Red Blend","vineyard":"Bolt Cutter","vintage":2012,"location":"A-3-3","can_drink":2021,"drink_by":2025,"quantity":3,"score":null,"notes":""},{"id":"92","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Putnam","vintage":2019,"location":"A-4-1","can_drink":2023,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"93","winery":"Signaterra","varietal":"Pinot Noir","vineyard":"La Reina","vintage":2014,"location":"A-4-1","can_drink":2018,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"94","winery":"St. Francis","varietal":"Pinot Noir","vineyard":"Sonoma Coast","vintage":2014,"location":"A-4-2","can_drink":2018,"drink_by":2025,"quantity":3,"score":null,"notes":""},{"id":"95","winery":"St. Francis","varietal":"Merlot","vineyard":"Wild Oak","vintage":2016,"location":"A-4-3","can_drink":2021,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"96","winery":"Herman Story","varietal":"Syrah","vineyard":"White Hawk","vintage":2013,"location":"A-4-3","can_drink":2023,"drink_by":2025,"quantity":4,"score":null,"notes":""},{"id":"97","winery":"Rutherford Hill","varietal":"Merlot","vineyard":"Napa Valley","vintage":2019,"location":"A-5-2","can_drink":2023,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"98","winery":"Frank Family","varietal":"Pinot Noir","vineyard":"Lewis","vintage":2014,"location":"A-5-2","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"99","winery":"Hafner","varietal":"Cabernet Sauvignon","vineyard":"","vintage":2012,"location":"A-5-3","can_drink":2019,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"100","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Klopp","vintage":2019,"location":"A-5-3","can_drink":2023,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"101","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Hellenthal","vintage":2018,"location":"B-2-1","can_drink":2022,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"102","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Russian River","vintage":2014,"location":"B-2-1","can_drink":2018,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"103","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Wild Cat Mountain","vintage":2014,"location":"B-3-1","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"104","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Russian River","vintage":2014,"location":"B-3-2","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"105","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Tres Viejos","vintage":2018,"location":"B-3-2","can_drink":2022,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"106","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Gold Rock Ranch","vintage":2014,"location":"B-3-3","can_drink":2018,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"107","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Cummings","vintage":2014,"location":"B-3-3","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"108","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Wildcat Mountain","vintage":2018,"location":"B-3-3","can_drink":2022,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"109","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Thale's","vintage":2019,"location":"B-3-3","can_drink":2023,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"110","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Central Coast","vintage":2014,"location":"B-3-3","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"111","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Terra de Promissio","vintage":2014,"location":"B-4-2","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"112","winery":"Windvane","varietal":"Pinot Noir","vineyard":"Carneros","vintage":2017,"location":"C-2-2","can_drink":2021,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"113","winery":"Benziger","varietal":"Pinot Noir","vineyard":"Sonoma Coast","vintage":2014,"location":"C-3-1","can_drink":2018,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"114","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Montecillo","vintage":2016,"location":"C-3-1","can_drink":2020,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"115","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Sonoma County","vintage":2014,"location":"C-3-2","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"116","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Bucher","vintage":2014,"location":"C-3-2","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"117","winery":"Gloria Ferrer","varietal":"Pinot Noir","vineyard":"Jose Ferrer","vintage":2014,"location":"C-3-3","can_drink":2018,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"118","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Eastside Road","vintage":2014,"location":"C-3-3","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"119","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Thale's","vintage":2014,"location":"C-4-3","can_drink":2018,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"120","winery":"Signaterra","varietal":"Cabernet Sauvignon","vineyard":"3 Blocks","vintage":2012,"location":"C-5-1","can_drink":2019,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"121","winery":"Benziger","varietal":"Syrah","vineyard":"Stone Dragon","vintage":2016,"location":"C-5-1","can_drink":2021,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"122","winery":"Benziger","varietal":"Cabernet Sauvignon","vineyard":"Sonoma Valley","vintage":2012,"location":"D-3-1","can_drink":2019,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"123","winery":"Williams Selyem","varietal":"Pinot Noir","vineyard":"Weir","vintage":2014,"location":"D-3-1","can_drink":2018,"drink_by":2025,"quantity":2,"score":null,"notes":""},{"id":"124","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Klopp","vintage":2014,"location":"D-4-1","can_drink":2018,"drink_by":2025,"quantity":1,"score":null,"notes":""},{"id":"125","winery":"Herman Story","varietal":"Rhone Blend","vineyard":"Casual Encounter","vintage":2013,"location":"A-2-1","can_drink":2020,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"126","winery":"Benziger","varietal":"Red Blend","vineyard":"Oonapais","vintage":2013,"location":"A-2-2","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"127","winery":"Benziger","varietal":"Red Blend","vineyard":"Calabassas Canyon","vintage":2013,"location":"A-3-1","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"128","winery":"Herman Story","varietal":"Red Blend","vineyard":"Casual Encounter","vintage":2013,"location":"A-3-1","can_drink":2020,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"129","winery":"Benziger","varietal":"Red Blend","vineyard":"Solstice Blend","vintage":2013,"location":"A-4-1","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"130","winery":"De Martino","varietal":"Cabernet Malbec","vineyard":"Legado","vintage":2013,"location":"A-4-1","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"131","winery":"Frank Family","varietal":"Sangiovese","vineyard":"Winston Hill","vintage":2013,"location":"A-4-2","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"132","winery":"St. Francis","varietal":"Sangiovese","vineyard":"Carosanto","vintage":2017,"location":"A-5-3","can_drink":2022,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"133","winery":"Henschke","varietal":"Red Blend","vineyard":"Barossa","vintage":2013,"location":"B-1-1","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"134","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Bacchi Old Vine","vintage":2019,"location":"B-2-1","can_drink":2026,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"135","winery":"St. Francis","varietal":"Cabernet Franc","vineyard":"Wild Oak","vintage":2018,"location":"B-2-2","can_drink":2025,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"136","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Giovanetti","vintage":2018,"location":"B-2-3","can_drink":2025,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"137","winery":"Benziger","varietal":"Cabernet Sauvignon","vineyard":"Sonoma Valley","vintage":2013,"location":"B-3-1","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"138","winery":"Hafner","varietal":"Red Blend","vineyard":"Next Red","vintage":2013,"location":"B-3-3","can_drink":2020,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"139","winery":"Clockwise","varietal":"Cabernet Sauvignon","vineyard":"Yountville","vintage":2018,"location":"B-4-1","can_drink":2025,"drink_by":2026,"quantity":4,"score":null,"notes":""},{"id":"140","winery":"Signaterra","varietal":"Red Blend","vineyard":"Etta's Blend","vintage":2013,"location":"B-4-2","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"141","winery":"Hafner","varietal":"Cabernet Sauvignon","vineyard":"","vintage":2013,"location":"B-5-1","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"142","winery":"Benziger","varietal":"Bordeaux Blend","vineyard":"Tribute","vintage":2013,"location":"B-5-2","can_drink":2020,"drink_by":2026,"quantity":3,"score":null,"notes":""},{"id":"143","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2018,"location":"B-5-3","can_drink":2025,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"144","winery":"Signaterra","varietal":"Cabernet Sauvignon","vineyard":"Three Blocks","vintage":2013,"location":"C-3-2","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"145","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Russian River","vintage":2015,"location":"C-3-2","can_drink":2019,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"146","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Cummings","vintage":2015,"location":"C-3-3","can_drink":2019,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"147","winery":"St. Francis","varietal":"Pinot Noir","vineyard":"Sonoma Coast","vintage":2015,"location":"C-3-3","can_drink":2019,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"148","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Lagomarsino","vintage":2018,"location":"C-4-1","can_drink":2025,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"149","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Montecillo","vintage":2017,"location":"C-4-1","can_drink":2024,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"150","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Gold Rock Ranch","vintage":2015,"location":"C-4-2","can_drink":2019,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"151","winery":"St. Francis","varietal":"Meritage","vineyard":"Anthem","vintage":2017,"location":"C-4-3","can_drink":2024,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"152","winery":"Hafner","varietal":"Cabernet Sauvignon","vineyard":"","vintage":2013,"location":"C-5-1","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"153","winery":"St. Francis","varietal":"Meritage","vineyard":"Anthem","vintage":2018,"location":"C-5-1","can_drink":2025,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"154","winery":"St. Francis","varietal":"Petite Syrah","vineyard":"Wild Oak","vintage":2018,"location":"C-5-1","can_drink":2025,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"155","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2019,"location":"C-5-2","can_drink":2026,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"156","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Thale's","vintage":2015,"location":"C-5-2","can_drink":2019,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"157","winery":"Benziger","varietal":"Pinot Noir","vineyard":"Dundee Hills","vintage":2015,"location":"D-3-3","can_drink":2019,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"158","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Wildcat Mountain","vintage":2015,"location":"D-4-1","can_drink":2019,"drink_by":2026,"quantity":2,"score":null,"notes":""},{"id":"159","winery":"St. Francis","varietal":"Zinfandel","vineyard":"My Father's Vineyard","vintage":2013,"location":"D-4-2","can_drink":2020,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"160","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Dry Creek Valley","vintage":2018,"location":"L46","can_drink":2025,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"161","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Bacchi Old Vine","vintage":2018,"location":"N48","can_drink":2025,"drink_by":2026,"quantity":1,"score":null,"notes":""},{"id":"162","winery":"Les Forts de Latour","varietal":"Bordeaux Blend","vineyard":"Pauillac","vintage":2000,"location":"B-5-2","can_drink":2005,"drink_by":2025,"quantity":1,"score":93,"notes":""},{"id":"163","winery":"Valley View","varietal":"Tempranillo","vineyard":"","vintage":2014,"location":"A-2-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"164","winery":"De Coelo","varietal":"Pinot Noir","vineyard":"Arbore Sacra","vintage":2016,"location":"A-2-3","can_drink":2020,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"165","winery":"Donelan","varietal":"Pinot Noir","vineyard":"Cushings Block","vintage":2016,"location":"A-2-3","can_drink":2020,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"166","winery":"Flowers","varietal":"Pinot Noir","vineyard":"Sonoma Coast","vintage":2016,"location":"A-2-3","can_drink":2020,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"167","winery":"Signaterra","varietal":"Pinot Noir","vineyard":"La Reyna","vintage":2016,"location":"A-2-3","can_drink":2020,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"168","winery":"Signaterra","varietal":"Pinot Noir","vineyard":"Bella Luna","vintage":2016,"location":"A-2-3","can_drink":2020,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"169","winery":"St. Francis","varietal":"Pinot Noir","vineyard":"Carneros","vintage":2016,"location":"A-2-3","can_drink":2020,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"170","winery":"Signaterra","varietal":"Red Blend","vineyard":"Three Blocks","vintage":2014,"location":"A-3-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"171","winery":"Benziger","varietal":"Red Blend","vineyard":"Calabasas Canyon","vintage":2014,"location":"A-3-2","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"172","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Thale's","vintage":2016,"location":"A-4-2","can_drink":2020,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"173","winery":"Ledson","varietal":"Merlot","vineyard":"Moon","vintage":2018,"location":"A-4-3","can_drink":2023,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"174","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Champlain Creek","vintage":2016,"location":"A-4-3","can_drink":2020,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"175","winery":"Benziger","varietal":"Red Blend","vineyard":"Solstice","vintage":2014,"location":"A-4-3","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"176","winery":"Benziger","varietal":"Red Blend","vineyard":"Oonapais","vintage":2014,"location":"A-5-2","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"177","winery":"Herman Story","varietal":"Grenache","vineyard":"Bien Nacido","vintage":2014,"location":"A-5-3","can_drink":2021,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"178","winery":"Donelan","varietal":"Red Blend","vineyard":"Cuvee Moria","vintage":2014,"location":"A-5-3","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"179","winery":"Gloria Ferrer","varietal":"Pinot Noir","vineyard":"Gravel Knob","vintage":2016,"location":"B-1-1","can_drink":2020,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"180","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Loch","vintage":2016,"location":"B-1-3","can_drink":2020,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"181","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Dry Creek Valley","vintage":2014,"location":"B-3-3","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"182","winery":"St. Francis","varietal":"Cabernet Franc","vineyard":"Wild Oak","vintage":2014,"location":"B-4-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"183","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Lagomarsino","vintage":2014,"location":"B-4-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"184","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Rock Pile","vintage":2014,"location":"B-4-2","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"185","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Manzana","vintage":2016,"location":"B-4-3","can_drink":2020,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"186","winery":"Benziger","varietal":"Bordeaux Blend","vineyard":"Tribute","vintage":2014,"location":"B-5-1","can_drink":2021,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"187","winery":"Chateau Belles-Graves","varietal":"Bordeaux Blend","vineyard":"","vintage":2014,"location":"B-5-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"188","winery":"St. Francis","varietal":"Petite Syrah","vineyard":"Wild Oak","vintage":2014,"location":"B-5-2","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"189","winery":"Wren Hop","varietal":"Pinot Noir","vineyard":"Cautionary Tale","vintage":2016,"location":"B-5-2","can_drink":2020,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"190","winery":"St. Francis","varietal":"Pinot Noir","vineyard":"Sonoma Coast","vintage":2016,"location":"C-2-1","can_drink":2020,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"191","winery":"Herman Story","varietal":"Red Blend","vineyard":"Larner","vintage":2014,"location":"C-2-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"192","winery":"Herman Story","varietal":"Syrah","vineyard":"Nuts and Bolts","vintage":2014,"location":"C-2-1","can_drink":2021,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"193","winery":"Hafner","varietal":"Cabernet Sauvignon","vineyard":"","vintage":2014,"location":"C-4-1","can_drink":2021,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"194","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Wohler","vintage":2016,"location":"C-4-1","can_drink":2020,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"195","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Wildcat Mountain","vintage":2016,"location":"C-4-1","can_drink":2020,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"196","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2014,"location":"C-4-2","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"197","winery":"Signaterra","varietal":"Red Blend","vineyard":"3 Blocks","vintage":2014,"location":"C-4-2","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"198","winery":"Herman Story","varietal":"Red Blend","vineyard":"Bolt Cutter","vintage":2014,"location":"C-4-3","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"199","winery":"St. Francis","varietal":"Petite Syrah","vineyard":"Wild Oak","vintage":2014,"location":"C-5-1","can_drink":2021,"drink_by":2027,"quantity":2,"score":null,"notes":""},{"id":"200","winery":"Wilson","varietal":"Zinfandel","vineyard":"3 Dog","vintage":2014,"location":"D-2-3","can_drink":2021,"drink_by":2027,"quantity":10,"score":null,"notes":""},{"id":"201","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Tres Viejos","vintage":2014,"location":"D-3-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"202","winery":"Benziger","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2014,"location":"D-4-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"203","winery":"Signaterra","varietal":"Red Blend","vineyard":"Etta's","vintage":2014,"location":"D-4-1","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"204","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Bacchi Old Vine","vintage":2014,"location":"D-4-2","can_drink":2021,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"205","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Lagomarsino","vintage":2017,"location":"K46","can_drink":2024,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"206","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Rock Pile","vintage":2018,"location":"M46","can_drink":2025,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"207","winery":"St. Francis","varietal":"Merlot","vineyard":"Behler","vintage":2018,"location":"N47","can_drink":2025,"drink_by":2027,"quantity":1,"score":null,"notes":""},{"id":"208","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Thale's","vintage":2017,"location":"A-2-2","can_drink":2021,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"209","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Terra de Promissio","vintage":2017,"location":"A-3-3","can_drink":2021,"drink_by":2028,"quantity":2,"score":null,"notes":""},{"id":"210","winery":"Signaterra","varietal":"Pinot Noir","vineyard":"La Reyna","vintage":2017,"location":"A-3-3","can_drink":2021,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"211","winery":"Signaterra","varietal":"Red Blend","vineyard":"Three Blocks","vintage":2015,"location":"A-4-1","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"212","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Lagomarsino","vintage":2015,"location":"A-4-2","can_drink":2022,"drink_by":2028,"quantity":2,"score":null,"notes":""},{"id":"213","winery":"Herman Story","varietal":"Red Blend","vineyard":"Milk & Honey","vintage":2015,"location":"A-4-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"214","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Loch","vintage":2017,"location":"B-1-1","can_drink":2021,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"215","winery":"Hafner","varietal":"Red Blend","vineyard":"Next Red","vintage":2015,"location":"B-1-1","can_drink":2022,"drink_by":2028,"quantity":2,"score":null,"notes":""},{"id":"216","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Giovanetti","vintage":2015,"location":"B-1-1","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"217","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Banti","vintage":2015,"location":"B-2-1","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"218","winery":"St. Francis","varietal":"Port","vineyard":"Sonoma County","vintage":2017,"location":"B-2-2","can_drink":null,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"219","winery":"St. Francis","varietal":"Cabernet Franc","vineyard":"Wild Oak","vintage":2015,"location":"B-3-1","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"220","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Tres Viejos","vintage":2015,"location":"B-3-1","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"221","winery":"Herman Story","varietal":"Grenache","vineyard":"On the Road","vintage":2015,"location":"B-3-2","can_drink":2022,"drink_by":2028,"quantity":2,"score":null,"notes":""},{"id":"222","winery":"Benziger","varietal":"Red Blend","vineyard":"Calabasas Canyon","vintage":2015,"location":"B-3-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"223","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Cummings","vintage":2017,"location":"B-3-3","can_drink":2021,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"224","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Donnelly Creek","vintage":2017,"location":"B-4-1","can_drink":2021,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"225","winery":"Experience","varietal":"Cabernet Sauvignon","vineyard":"","vintage":2015,"location":"B-4-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"226","winery":"Herman Story","varietal":"Grenache","vineyard":"Bien Nacido","vintage":2015,"location":"B-4-2","can_drink":2022,"drink_by":2028,"quantity":2,"score":null,"notes":""},{"id":"227","winery":"Benziger","varietal":"Red Blend","vineyard":"Oonapais","vintage":2015,"location":"B-4-3","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"228","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Dry Creek Valley","vintage":2015,"location":"B-4-3","can_drink":2022,"drink_by":2028,"quantity":3,"score":null,"notes":""},{"id":"229","winery":"Mountain Terrace","varietal":"Cabernet Sauvignon","vineyard":"Taylor's","vintage":2015,"location":"B-5-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"230","winery":"Benziger","varietal":"Red Blend","vineyard":"Tribute","vintage":2015,"location":"B-5-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"231","winery":"St. Francis","varietal":"Cabernet Franc","vineyard":"Wild Oak","vintage":2019,"location":"C-1-2","can_drink":2024,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"232","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Lagomarsino","vintage":2015,"location":"C-1-4","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"233","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Giovanetti","vintage":2015,"location":"C-1-4","can_drink":2022,"drink_by":2028,"quantity":2,"score":null,"notes":""},{"id":"234","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Lagomarsino","vintage":2015,"location":"C-2-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"235","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Rock Pile","vintage":2015,"location":"C-3-1","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"236","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Putnam","vintage":2017,"location":"C-3-1","can_drink":2021,"drink_by":2028,"quantity":2,"score":null,"notes":""},{"id":"237","winery":"Herman Story","varietal":"Red Blend","vineyard":"Larner","vintage":2015,"location":"C-3-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"238","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Dry Creek Valley","vintage":2015,"location":"C-3-2","can_drink":2022,"drink_by":2028,"quantity":2,"score":null,"notes":""},{"id":"239","winery":"St. Francis","varietal":"Red Blend","vineyard":"Anthem","vintage":2015,"location":"C-3-3","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"240","winery":"Herman Story","varietal":"Red Blend","vineyard":"Casual Encounter","vintage":2015,"location":"C-4-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"241","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2015,"location":"C-4-3","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"242","winery":"Wilson","varietal":"Zinfandel","vineyard":"Heartland","vintage":2015,"location":"C-4-3","can_drink":2022,"drink_by":2028,"quantity":3,"score":null,"notes":""},{"id":"243","winery":"Benziger","varietal":"Cabernet Sauvignon","vineyard":"Sonoma Valley","vintage":2015,"location":"C-5-2","can_drink":2022,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"244","winery":"St. Francis","varietal":"Merlot","vineyard":"Behler","vintage":2019,"location":"D-1-2","can_drink":2024,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"245","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Hellenthal","vintage":2017,"location":"D-2-1","can_drink":2021,"drink_by":2028,"quantity":1,"score":null,"notes":""},{"id":"246","winery":"Wilson","varietal":"Zinfandel","vineyard":"Tori","vintage":2015,"location":"D-3-2","can_drink":2022,"drink_by":2028,"quantity":3,"score":null,"notes":""},{"id":"247","winery":"Gloria Ferrer","varietal":"Pinot Noir","vineyard":"Alquimia","vintage":2018,"location":"A-3-2","can_drink":2022,"drink_by":2029,"quantity":2,"score":null,"notes":""},{"id":"248","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Tres Viejos","vintage":2016,"location":"A-4-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"249","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Giovanetti","vintage":2016,"location":"A-4-3","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"250","winery":"St. Francis","varietal":"Petite Syrah","vineyard":"Wild Oak","vintage":2016,"location":"A-5-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"251","winery":"Herman Story","varietal":"Red Blend","vineyard":"Milk & Honey","vintage":2016,"location":"A-5-3","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"252","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Bacchi Old Vine","vintage":2016,"location":"B-1-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"253","winery":"Groot Constantia","varietal":"Red Blend","vineyard":"Gouverneurs","vintage":2016,"location":"B-3-4","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"254","winery":"Benziger","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2016,"location":"B-4-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"255","winery":"Anthem","varietal":"Meritage","vineyard":"","vintage":2016,"location":"B-5-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"256","winery":"Herman Story","varietal":"Petite Syrah","vineyard":"First Time Caller","vintage":2016,"location":"B-5-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"257","winery":"St. Francis","varietal":"Port","vineyard":"Sonoma County","vintage":2016,"location":"B-5-3","can_drink":2020,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"258","winery":"Benziger","varietal":"Red Blend","vineyard":"Oonopais","vintage":2016,"location":"B-5-3","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"259","winery":"Benziger","varietal":"Red Blend","vineyard":"Calabasas Canyon","vintage":2016,"location":"C-4-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"260","winery":"Signaterra","varietal":"Red Blend","vineyard":"3 Blocks","vintage":2016,"location":"C-4-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"261","winery":"Benziger","varietal":"Red Blend","vineyard":"Solstice","vintage":2016,"location":"C-5-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"262","winery":"St. Francis","varietal":"Merlot","vineyard":"Behler","vintage":2020,"location":"D-3-2","can_drink":2025,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"263","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Dry Creek","vintage":2016,"location":"D-4-1","can_drink":2023,"drink_by":2029,"quantity":1,"score":null,"notes":""},{"id":"264","winery":"St. Francis","varietal":"Red Blend","vineyard":"Anthem","vintage":2017,"location":"A-2-2","can_drink":2024,"drink_by":2030,"quantity":1,"score":null,"notes":""},{"id":"265","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Tres Viejos","vintage":2017,"location":"A-3-1","can_drink":2024,"drink_by":2030,"quantity":1,"score":null,"notes":""},{"id":"266","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Rock Pile","vintage":2021,"location":"A-3-2","can_drink":2026,"drink_by":2030,"quantity":1,"score":null,"notes":""},{"id":"267","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2017,"location":"A-4-1","can_drink":2024,"drink_by":2030,"quantity":2,"score":null,"notes":""},{"id":"268","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Banti","vintage":2017,"location":"B-1-1","can_drink":2024,"drink_by":2030,"quantity":2,"score":null,"notes":""},{"id":"269","winery":"Gloria Ferrer","varietal":"Pinot Noir","vineyard":"Willow","vintage":2019,"location":"B-1-2","can_drink":2023,"drink_by":2030,"quantity":1,"score":null,"notes":""},{"id":"270","winery":"St. Francis","varietal":"Petite Syrah","vineyard":"Wild Oak","vintage":2017,"location":"B-1-5","can_drink":2024,"drink_by":2030,"quantity":1,"score":null,"notes":""},{"id":"271","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Wildcat","vintage":2019,"location":"B-2-1","can_drink":2023,"drink_by":2030,"quantity":1,"score":null,"notes":""},{"id":"272","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Gap's Crown","vintage":2019,"location":"C-1-2","can_drink":2023,"drink_by":2030,"quantity":1,"score":null,"notes":""},{"id":"273","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Rock Pile","vintage":2017,"location":"C-5-1","can_drink":2024,"drink_by":2030,"quantity":1,"score":null,"notes":""},{"id":"274","winery":"St. Francis","varietal":"Red Blend","vineyard":"Anthem","vintage":2018,"location":"C-1-1","can_drink":2025,"drink_by":2031,"quantity":1,"score":null,"notes":""},{"id":"275","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Day Ranch","vintage":2020,"location":"C-1-3","can_drink":2024,"drink_by":2031,"quantity":2,"score":null,"notes":""},{"id":"276","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Rock Pile","vintage":2018,"location":"C-2-1","can_drink":2025,"drink_by":2031,"quantity":1,"score":null,"notes":""},{"id":"277","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Anmacleto","vintage":2018,"location":"D-2-1","can_drink":2025,"drink_by":2031,"quantity":1,"score":null,"notes":""},{"id":"278","winery":"St. Francis","varietal":"Red Blend","vineyard":"Fratello","vintage":2019,"location":"A-3-1","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"279","winery":"St. Francis","varietal":"Red Blend","vineyard":"Anthem","vintage":2019,"location":"A-3-2","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"280","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Giovanetti","vintage":2019,"location":"A-3-3","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"281","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Nightwing","vintage":2021,"location":"A-4-1","can_drink":2025,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"282","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Rock Pile","vintage":2019,"location":"B-1-3","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"283","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Anacleto","vintage":2019,"location":"B-2-2","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"284","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Lagomarsino","vintage":2019,"location":"B-2-3","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"285","winery":"Macrostie","varietal":"Red Blend","vineyard":"The Loch","vintage":2019,"location":"C-1-1","can_drink":2026,"drink_by":2032,"quantity":2,"score":null,"notes":""},{"id":"286","winery":"St. Francis","varietal":"Red Blend","vineyard":"Cuvee Lago","vintage":2019,"location":"C-2-1","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"287","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"River Road","vintage":2021,"location":"C-2-3","can_drink":2025,"drink_by":2032,"quantity":2,"score":null,"notes":""},{"id":"288","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Tres Viejos","vintage":2019,"location":"D-1-2","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"289","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Monticello","vintage":2019,"location":"D-1-3","can_drink":2026,"drink_by":2032,"quantity":1,"score":null,"notes":""},{"id":"290","winery":"Ridge","varietal":"Zinfandel","vineyard":"Lytton Springs","vintage":2020,"location":"A-3-2","can_drink":2027,"drink_by":2033,"quantity":1,"score":null,"notes":""},{"id":"291","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Dry Creek","vintage":2020,"location":"B-1-2","can_drink":2027,"drink_by":2033,"quantity":1,"score":null,"notes":""},{"id":"292","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Tres Viejos","vintage":2020,"location":"C-1-3","can_drink":2027,"drink_by":2033,"quantity":1,"score":null,"notes":""},{"id":"293","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2020,"location":"C-2-3","can_drink":2027,"drink_by":2033,"quantity":2,"score":null,"notes":""},{"id":"294","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Wildcat","vintage":2022,"location":"D-2-1","can_drink":2026,"drink_by":2033,"quantity":2,"score":null,"notes":""},{"id":"295","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"The Key","vintage":2022,"location":"","can_drink":2026,"drink_by":2033,"quantity":1,"score":null,"notes":""},{"id":"296","winery":"Macrostie","varietal":"Pinot Noir","vineyard":"Gualala","vintage":2021,"location":"A-3-2","can_drink":2028,"drink_by":2034,"quantity":1,"score":null,"notes":""},{"id":"297","winery":"St. Francis","varietal":"Merlot","vineyard":"Behler","vintage":2021,"location":"A-3-3","can_drink":2028,"drink_by":2034,"quantity":1,"score":null,"notes":""},{"id":"298","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Moon Mountain","vintage":2021,"location":"A-4-1","can_drink":2028,"drink_by":2034,"quantity":1,"score":null,"notes":""},{"id":"299","winery":"St. Francis","varietal":"Red Blend","vineyard":"Cuvee Lago","vintage":2021,"location":"A-4-3","can_drink":2028,"drink_by":2034,"quantity":1,"score":null,"notes":""},{"id":"300","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Tres Viejos","vintage":2021,"location":"A-5-1","can_drink":2028,"drink_by":2034,"quantity":1,"score":null,"notes":""},{"id":"301","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Moon Mountain","vintage":2021,"location":"A-5-2","can_drink":2028,"drink_by":2034,"quantity":2,"score":null,"notes":""},{"id":"302","winery":"St. Francis","varietal":"Red Blend","vineyard":"Fratello","vintage":2021,"location":"B-2-1","can_drink":2028,"drink_by":2034,"quantity":1,"score":null,"notes":""},{"id":"303","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Bacchi","vintage":2021,"location":"B-3-1","can_drink":2028,"drink_by":2034,"quantity":1,"score":null,"notes":""},{"id":"304","winery":"St. Francis","varietal":"Cabernet Franc","vineyard":"Wild Oak","vintage":2021,"location":"B-3-2","can_drink":2028,"drink_by":2034,"quantity":1,"score":null,"notes":""},{"id":"305","winery":"Macrostie","varietal":"Red Blend","vineyard":"Loch","vintage":2021,"location":"C-2-2","can_drink":2028,"drink_by":2034,"quantity":2,"score":null,"notes":""},{"id":"306","winery":"Penfolds","varietal":"Shiraz","vineyard":"St. Henri","vintage":2012,"location":"Z1","can_drink":2017,"drink_by":2040,"quantity":1,"score":null,"notes":""},{"id":"307","winery":"St. Francis","varietal":"Cabernet Sauvignon","vineyard":"Lagomarsino","vintage":2015,"location":"C-4-1","can_drink":null,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"308","winery":"St. Francis","varietal":"Zinfandel","vineyard":"Giovanetti","vintage":2015,"location":"C-4-2","can_drink":null,"drink_by":2024,"quantity":1,"score":null,"notes":""},{"id":"309","winery":"Chateau Prieure-Lichine","varietal":"Bordeaux Blend","vineyard":"Margaux","vintage":2000,"location":"C-5-1","can_drink":2005,"drink_by":null,"quantity":1,"score":null,"notes":""}];
-
-async function loadWines() {
-  // Load local data first so UI appears immediately
+// ── Google Sheets sync ────────────────────────────────────────────────────
+async function syncFromSheets() {
+  updateNotice('☁️ Loading from Google Sheets…');
   try {
-    const stored = localStorage.getItem('cave_privee_' + (currentCellarOwner || 'local'));
-    wines = stored ? JSON.parse(stored) : [];
-    if (wines.length === 0) {
-      wines = JSON.parse(JSON.stringify(PRELOADED_WINES));
-      localStorage.setItem('cave_privee_' + (currentCellarOwner || 'local'), JSON.stringify(wines));
-    }
-  } catch { wines = JSON.parse(JSON.stringify(PRELOADED_WINES)); }
-  updateStats();
-  renderCellar();
-  populateVarietalFilter();
-
-  // Then check cloud
-  if (SUPABASE_ENABLED) {
-    updateNotice('☁️ Connecting to cloud…');
-    let cloudData = null;
-    try {
-      cloudData = await loadFromCloud();
-    } catch(e) {
-      updateNotice('⚠️ Cloud error: ' + e.message);
-      showSyncBadge('⚠️ Cloud error');
-      console.error('Cloud load error:', e);
-    }
-    if (cloudData && cloudData.length > 0) {
-      // Cloud has data — use it
-      wines = cloudData;
-      localStorage.setItem('cave_privee_' + (currentCellarOwner || 'local'), JSON.stringify(wines));
-      updateStats(); renderCellar(); populateVarietalFilter();
-      updateNotice('☁️ Cloud sync active — ' + wines.length + ' wines loaded from cloud');
-      showSyncBadge('☁️ Loaded from cloud');
-    } else {
-      // Cloud is empty — push local data up now
-      updateNotice('☁️ Connected — uploading ' + wines.length + ' wines to cloud…');
-      showSyncBadge('☁️ First sync — uploading…');
-      await pushToCloud();
-    }
-    document.getElementById('cloud-sync-section').style.display = 'block';
-  } else {
-    console.log('Supabase not enabled. URL:', SUPABASE_URL ? 'set' : 'EMPTY', 'KEY:', SUPABASE_KEY ? 'set' : 'EMPTY');
-  }
-}
-// ── Supabase Config (optional cloud sync) ──────────────────────────────────
-// To enable cloud sync across all devices:
-// 1. Go to supabase.com → create free project
-// 2. Run this SQL in the SQL editor:
-//    create table wines (id text primary key, data jsonb, updated_at timestamptz default now());
-//    alter table wines enable row level security;
-//    create policy "public" on wines for all using (true);
-// 3. Paste your Project URL and anon key below
-const SUPABASE_URL = 'https://eqyjjzhoqqsgdzuopymk.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeWpqemhvcXFzZ2R6dW9weW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3NDUwNTUsImV4cCI6MjA4NzMyMTA1NX0.GM6e6_U0yq1xqoUmtqE62eDkl9DNd8XURLRUz4oHapM';
-const SUPABASE_ENABLED = SUPABASE_URL && SUPABASE_KEY;
-
-async function saveWines() {
-  localStorage.setItem('cave_privee_' + (currentCellarOwner || 'local'), JSON.stringify(wines));
-  updateStats();
-  populateVarietalFilter();
-  if (SUPABASE_ENABLED) {
-    try {
-      // Upsert entire collection as a single row keyed 'cellar'
-      await fetch(SUPABASE_URL + '/rest/v1/wines', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'Prefer': 'return=minimal,resolution=merge-duplicates'
-        },
-        body: JSON.stringify([{ id: (currentCellarOwner || 'cellar'), data: wines, updated_at: new Date().toISOString() }])
-      });
-      showSyncBadge('☁️ Synced');
-    } catch(e) { showSyncBadge('⚠️ Sync failed'); }
-  }
-}
-
-async function loadFromCloud() {
-  if (!SUPABASE_ENABLED) return null;
-  try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/wines?id=eq.' + (currentCellarOwner || 'cellar') + '&select=data', {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Accept': 'application/json'
-      }
-    });
+    const res = await fetch(SHEETS_API);
     const rows = await res.json();
-    return rows?.[0]?.data || null;
-  } catch(e) { return null; }
+    if (!Array.isArray(rows) || rows.length === 0) {
+      updateNotice('⚠️ No data found in Google Sheets');
+      return;
+    }
+    wines = rows.map((r, i) => ({
+      id: String(i + 1),
+      winery:    String(r['Winery']    || r['winery']    || ''),
+      varietal:  String(r['Varietal']  || r['varietal']  || ''),
+      vineyard:  String(r['Vineyard']  || r['vineyard']  || ''),
+      vintage:   parseInt(r['Year']    || r['vintage']   || r['Vintage']) || null,
+      location:  String(r['Location']  || r['location']  || ''),
+      can_drink: parseInt(r['Can Drink']|| r['can_drink'] || r['CanDrink']) || null,
+      drink_by:  parseInt(r['Drink By'] || r['drink_by']  || r['DrinkBy'])  || null,
+      quantity:  parseInt(r['Qty']      || r['quantity']  || r['Quantity']) || 1,
+      score:     parseInt(r['Score']    || r['score'])    || null,
+      notes:     String(r['Notes']      || r['notes']     || ''),
+    }));
+    localStorage.setItem('cave_privee_local', JSON.stringify(wines));
+    updateStats(); renderCellar(); populateVarietalFilter();
+    updateNotice('☁️ Google Sheets sync active — ' + wines.length + ' wines loaded');
+    showSyncBadge('☁️ Loaded from Sheets');
+  } catch(e) {
+    updateNotice('⚠️ Could not reach Google Sheets — using local cache');
+    showSyncBadge('⚠️ Sheets offline');
+    loadLocal();
+  }
 }
 
+async function pushToSheets() {
+  try {
+    await fetch(SHEETS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'save_all', wines })
+    });
+    showSyncBadge('☁️ Saved to Sheets');
+  } catch(e) {
+    showSyncBadge('⚠️ Sheets save failed');
+  }
+}
+
+function loadLocal() {
+  try {
+    const stored = localStorage.getItem('cave_privee_local');
+    if (stored) wines = JSON.parse(stored);
+  } catch(e) {}
+  updateStats(); renderCellar(); populateVarietalFilter();
+}
+
+function saveWines() {
+  // Save locally immediately
+  localStorage.setItem('cave_privee_local', JSON.stringify(wines));
+  updateStats(); populateVarietalFilter();
+  // Debounce Sheets push — wait 1.5s after last change
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(pushToSheets, 1500);
+}
+
+// ── UI helpers ─────────────────────────────────────────────────────────────
 function showSyncBadge(msg) {
   let badge = document.getElementById('sync-badge');
   if (!badge) {
@@ -623,37 +445,8 @@ function showSyncBadge(msg) {
 }
 
 function updateNotice(msg) {
-  const n = document.getElementById('storage-notice');
+  const n = document.getElementById('sync-notice');
   if (n) n.innerHTML = '<strong>' + msg + '</strong>';
-}
-
-async function pushToCloud() {
-  if (!SUPABASE_ENABLED) { alert('Supabase not configured yet.'); return; }
-  showSyncBadge('☁️ Uploading…');
-  try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/wines', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Prefer': 'return=minimal,resolution=merge-duplicates'
-      },
-      body: JSON.stringify([{ id: (currentCellarOwner || 'cellar'), data: wines, updated_at: new Date().toISOString() }])
-    });
-    if (res.ok || res.status === 201) {
-      showSyncBadge('☁️ All data pushed to cloud!');
-      updateNotice('☁️ Cloud sync active — ' + wines.length + ' wines synced');
-    } else {
-      const err = await res.text();
-      showSyncBadge('⚠️ Push failed');
-      console.error('Supabase push error:', err);
-      alert('Push failed: ' + err + '\n\nCheck browser console for details.');
-    }
-  } catch(e) {
-    showSyncBadge('⚠️ Push failed');
-    alert('Network error: ' + e.message);
-  }
 }
 
 // ── Stats ──────────────────────────────────────────────────────────────────
@@ -673,10 +466,7 @@ function switchTab(name) {
     el.classList.toggle('active', ['cellar','detail','search','sort','import'][i] === name);
   });
   if (name === 'sort') renderSortTab();
-  if (name === 'search') {
-    populateSearchVarietal();
-    runAdvSearch();
-  }
+  if (name === 'search') { populateSearchVarietal(); runAdvSearch(); }
   if (name === 'cellar' && selectedWineId) {
     renderCellar();
     setTimeout(() => {
@@ -704,7 +494,7 @@ function populateVarietalFilter() {
 }
 
 function renderCellar() {
-  const q = document.getElementById('search').value.toLowerCase();
+  const q  = document.getElementById('search').value.toLowerCase();
   const fv = document.getElementById('filter').value;
   const grid = document.getElementById('wine-grid');
   const filtered = wines.filter(w => {
@@ -761,8 +551,7 @@ function renderDetail() {
   const w = wines.find(x=>x.id===selectedWineId);
   if (!w) return;
   const ins = insights[w.id];
-  const ds = drinkStatus(w);
-
+  const ds  = drinkStatus(w);
   document.getElementById('view-detail').innerHTML = `
     <div class="det-hero">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
@@ -779,18 +568,14 @@ function renderDetail() {
         </div>
       </div>
     </div>
-
-    <!-- AI Insights -->
     <div class="sec">
       <div class="sec-title">AI Sommelier Insights</div>
-      ${ins ? renderInsights(ins) : `
+      ${ins ? renderInsights(ins, w.id) : `
         <div style="text-align:center;padding:15px 0">
           <button class="btn btn-g" id="insights-btn" onclick="getInsights('${w.id}')">✨ Get AI Insights</button>
-          <div style="font-size:.78rem;color:var(--text-light);margin-top:8px">Ratings · Drinking window · Tasting notes · Pairings</div>
+          <div style="font-size:.78rem;color:var(--text-light);margin-top:8px">Ratings · Drinking window · Tasting notes · Pairings · Value</div>
         </div>`}
     </div>
-
-    <!-- Details -->
     <div class="sec">
       <div class="sec-title">Bottle Details</div>
       <div>
@@ -802,12 +587,11 @@ function renderDetail() {
           ].filter(([,v])=>v).map(([l,v])=>`<div class="df"><span class="dfl">${l}</span><span class="dfv">${esc(String(v))}</span></div>`).join('')}
       </div>
     </div>
-
     ${w.notes?`<div class="sec"><div class="sec-title">Notes</div><div class="note-box">${esc(w.notes)}</div></div>`:''}
   `;
 }
 
-function renderInsights(ins) {
+function renderInsights(ins, id) {
   return `
     <div class="insight-card">
       <div style="display:flex;align-items:flex-end;gap:13px;margin-bottom:10px">
@@ -826,57 +610,40 @@ function renderInsights(ins) {
       <div class="food-tags">${ins.foodPairings.map(f=>`<div class="food-tag">🍽 ${esc(f)}</div>`).join('')}</div>
     `:''}
     <div style="margin-top:10px">
-      <button class="btn btn-s btn-sm" onclick="getInsights('${selectedWineId}')">↻ Refresh</button>
+      ${ins.replacementValue?`<div class="df" style="margin-top:8px"><span class="dfl" style="color:#3D1515;font-weight:700;font-size:.9rem;text-transform:uppercase;letter-spacing:.08em">Est. Replacement Value</span><span style="color:var(--gold);font-weight:700;font-size:1.1rem">${ins.replacementValue}</span></div>`:''}
+      <button class="btn btn-s btn-sm" style="margin-top:8px" onclick="getInsights('${id||selectedWineId}')">↻ Refresh</button>
     </div>
   `;
 }
 
-// ── Claude AI ──────────────────────────────────────────────────────────────
+// ── AI Insights via Cloudflare Worker ──────────────────────────────────────
 async function getInsights(id) {
   const w = wines.find(x=>x.id===id);
   if (!w) return;
   const btn = document.getElementById('insights-btn');
   if (btn) btn.innerHTML = '<span class="spinner"></span> Consulting Claude…';
-
   try {
-    const res = await fetch(
-      'https://eqyjjzhoqqsgdzuopymk.supabase.co/functions/v1/super-function',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeWpqemhvcXFzZ2R6dW9weW1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3NDUwNTUsImV4cCI6MjA4NzMyMTA1NX0.GM6e6_U0yq1xqoUmtqE62eDkl9DNd8XURLRUz4oHapM'
-        },
-        body: JSON.stringify({
-          winery: w.winery,
-          varietal: w.varietal,
-          vineyard: w.vineyard || '',
-          vintage: w.vintage,
-          can_drink: w.can_drink,
-          drink_by: w.drink_by,
-          score: w.score
-        })
-      }
-    );
-
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error('Edge function error: ' + err);
-    }
-
+    const res = await fetch(CF_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        winery: w.winery, varietal: w.varietal,
+        vineyard: w.vineyard || '', vintage: w.vintage,
+        can_drink: w.can_drink, drink_by: w.drink_by, score: w.score
+      })
+    });
+    if (!res.ok) throw new Error('Worker error: ' + await res.text());
     const parsed = await res.json();
-
-    // Normalize field names from edge function response
     insights[id] = {
-      rating: parsed.rating,
-      drinkFrom: parsed.peak_start || parsed.drinkFrom,
-      drinkUntil: parsed.peak_end || parsed.drinkUntil,
-      peakYear: parsed.peak_start || parsed.peakYear,
-      tastingNotes: parsed.tasting_notes || parsed.tastingNotes,
-      foodPairings: parsed.food_pairings || parsed.foodPairings,
-      verdict: parsed.summary || parsed.verdict
+      rating:          parsed.rating,
+      drinkFrom:       parsed.drinkFrom,
+      drinkUntil:      parsed.drinkUntil,
+      peakYear:        parsed.peakYear,
+      tastingNotes:    parsed.tastingNotes,
+      foodPairings:    parsed.foodPairings,
+      verdict:         parsed.verdict,
+      replacementValue:parsed.replacementValue || null
     };
-
   } catch(e) {
     alert('Could not get AI insights: ' + e.message);
   }
@@ -889,10 +656,11 @@ function openAddModal() {
   document.getElementById('modal-title').textContent = 'Add to Cellar';
   document.getElementById('save-btn').textContent = 'Add to Cellar';
   document.getElementById('delete-btn').style.display = 'none';
-  ['winery','vintage','vineyard','varietal','location','can-drink','drink-by','score','notes'].forEach(f => {
+  ['winery','vintage','vineyard','location','can-drink','drink-by','score','notes'].forEach(f => {
     const el = document.getElementById('f-'+f);
-    if (el) el.value = f==='quantity'?'1':'';
+    if (el) el.value = '';
   });
+  document.getElementById('f-varietal').value = '';
   document.getElementById('f-quantity').value = '1';
   document.getElementById('modal-overlay').style.display = 'flex';
 }
@@ -904,40 +672,36 @@ function openEditModal(id) {
   document.getElementById('modal-title').textContent = 'Edit Wine';
   document.getElementById('save-btn').textContent = 'Save Changes';
   document.getElementById('delete-btn').style.display = 'inline-flex';
-  document.getElementById('f-winery').value = w.winery||'';
-  document.getElementById('f-vintage').value = w.vintage||'';
-  document.getElementById('f-vineyard').value = w.vineyard||'';
-  document.getElementById('f-varietal').value = w.varietal||'';
-  document.getElementById('f-location').value = w.location||'';
+  document.getElementById('f-winery').value    = w.winery||'';
+  document.getElementById('f-vintage').value   = w.vintage||'';
+  document.getElementById('f-vineyard').value  = w.vineyard||'';
+  document.getElementById('f-varietal').value  = w.varietal||'';
+  document.getElementById('f-location').value  = w.location||'';
   document.getElementById('f-can-drink').value = w.can_drink||'';
-  document.getElementById('f-drink-by').value = w.drink_by||'';
-  document.getElementById('f-quantity').value = w.quantity||1;
-  document.getElementById('f-score').value = w.score||'';
-  document.getElementById('f-notes').value = w.notes||'';
+  document.getElementById('f-drink-by').value  = w.drink_by||'';
+  document.getElementById('f-quantity').value  = w.quantity||1;
+  document.getElementById('f-score').value     = w.score||'';
+  document.getElementById('f-notes').value     = w.notes||'';
   document.getElementById('modal-overlay').style.display = 'flex';
 }
 
-function closeModal() {
-  document.getElementById('modal-overlay').style.display = 'none';
-}
+function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 
 function saveWine() {
-  const winery = document.getElementById('f-winery').value.trim();
+  const winery  = document.getElementById('f-winery').value.trim();
   const vintage = parseInt(document.getElementById('f-vintage').value);
-  const varietal = document.getElementById('f-varietal').value;
+  const varietal= document.getElementById('f-varietal').value;
   if (!winery || !vintage || !varietal) { alert('Please fill in Winery, Vintage, and Varietal.'); return; }
-
   const wine = {
     winery, vintage, varietal,
-    vineyard: document.getElementById('f-vineyard').value.trim(),
-    location: document.getElementById('f-location').value.trim().toUpperCase(),
+    vineyard:  document.getElementById('f-vineyard').value.trim(),
+    location:  document.getElementById('f-location').value.trim().toUpperCase(),
     can_drink: parseInt(document.getElementById('f-can-drink').value)||null,
-    drink_by: parseInt(document.getElementById('f-drink-by').value)||null,
-    quantity: parseInt(document.getElementById('f-quantity').value)||1,
-    score: parseInt(document.getElementById('f-score').value)||null,
-    notes: document.getElementById('f-notes').value.trim(),
+    drink_by:  parseInt(document.getElementById('f-drink-by').value)||null,
+    quantity:  parseInt(document.getElementById('f-quantity').value)||1,
+    score:     parseInt(document.getElementById('f-score').value)||null,
+    notes:     document.getElementById('f-notes').value.trim(),
   };
-
   if (editingWineId) {
     const idx = wines.findIndex(w=>w.id===editingWineId);
     wines[idx] = {...wines[idx], ...wine};
@@ -946,14 +710,10 @@ function saveWine() {
     wine.id = Date.now()+'-'+Math.random().toString(36).slice(2);
     wines.push(wine);
   }
-  saveWines();
-  renderCellar();
-  closeModal();
+  saveWines(); renderCellar(); closeModal();
 }
 
-function deleteCurrentEdit() {
-  if (editingWineId) { deleteWine(editingWineId); closeModal(); }
-}
+function deleteCurrentEdit() { if (editingWineId) { deleteWine(editingWineId); closeModal(); } }
 
 function deleteWine(id) {
   const w = wines.find(x=>x.id===id);
@@ -964,11 +724,33 @@ function deleteWine(id) {
     document.getElementById('tab-detail').disabled = true;
     switchTab('cellar');
   }
-  saveWines();
-  renderCellar();
+  saveWines(); renderCellar();
 }
 
-// ── CSV/Excel Import ───────────────────────────────────────────────────────
+// ── CSV Export ─────────────────────────────────────────────────────────────
+function exportCSV() {
+  const headers = ['Winery','Varietal','Vineyard','Year','Location','Can Drink','Drink By','Qty','Score','Notes'];
+  function csvEsc(v) {
+    if (v === null || v === undefined || v === '') return '';
+    const s = String(v);
+    return (s.includes(',') || s.includes('"') || s.includes('\n')) ? '"' + s.replace(/"/g,'""') + '"' : s;
+  }
+  const rows = wines.map(w => [
+    csvEsc(w.winery),csvEsc(w.varietal),csvEsc(w.vineyard),csvEsc(w.vintage),
+    csvEsc(w.location),csvEsc(w.can_drink),csvEsc(w.drink_by),
+    csvEsc(w.quantity||1),csvEsc(w.score),csvEsc(w.notes)
+  ].join(','));
+  const csv  = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'cave-privee-' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showSyncBadge('Downloaded ' + wines.length + ' wines');
+}
+
+// ── Import ─────────────────────────────────────────────────────────────────
 const COL_MAP = {
   winery:    ['winery','wine','producer'],
   varietal:  ['varietal','variety','grape'],
@@ -993,30 +775,25 @@ function findColIdx(headers, candidates) {
 function parseRows(rows, headers) {
   const idx = {};
   for (const [field, cands] of Object.entries(COL_MAP)) idx[field] = findColIdx(headers, cands);
-
   const result = [];
   for (const row of rows) {
     const get = f => {
-      const i = idx[f];
-      if (i < 0) return '';
+      const i = idx[f]; if (i < 0) return '';
       const v = Array.isArray(row) ? row[i] : Object.values(row)[i];
       return v != null ? String(v).trim() : '';
     };
     const winery = get('winery').replace(/`/g,'').trim();
-    if (!winery || winery.toLowerCase()==='winery' || winery.toLowerCase().includes('total') || winery.toLowerCase().includes('grand')) continue;
+    if (!winery || winery.toLowerCase()==='winery') continue;
     const vintage = parseInt(get('vintage'));
     if (!vintage || vintage < 1900 || vintage > 2100) continue;
     const scoreRaw = parseInt(get('score'));
     result.push({
       id: Date.now()+'-'+Math.random().toString(36).slice(2),
-      winery,
-      varietal: get('varietal'),
-      vineyard: get('vineyard'),
-      vintage,
+      winery, varietal: get('varietal'), vineyard: get('vineyard'), vintage,
       location: get('location').toUpperCase().replace(/`/g,'').trim(),
       can_drink: parseInt(get('can_drink'))||null,
-      drink_by: parseInt(get('drink_by'))||null,
-      quantity: parseInt(get('quantity'))||1,
+      drink_by:  parseInt(get('drink_by'))||null,
+      quantity:  parseInt(get('quantity'))||1,
       score: isNaN(scoreRaw)||scoreRaw<50||scoreRaw>100 ? null : scoreRaw,
       notes: '',
     });
@@ -1041,22 +818,17 @@ function processFile(file) {
   reader.onload = e => {
     try {
       const data = new Uint8Array(e.target.result);
-      const wb = XLSX.read(data, {type:'array'});
-      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const wb   = XLSX.read(data, {type:'array'});
+      const sheet= wb.Sheets[wb.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''});
-
       let headerIdx = 0;
       for (let i=0; i<Math.min(10,rows.length); i++) {
         const rowStr = rows[i].map(c=>String(c).toLowerCase()).join(' ');
         if (rowStr.includes('winery') || rowStr.includes('varietal')) { headerIdx = i; break; }
       }
-      const headers = rows[headerIdx];
-      const dataRows = rows.slice(headerIdx+1);
-      importPreviewWines = parseRows(dataRows, headers);
+      importPreviewWines = parseRows(rows.slice(headerIdx+1), rows[headerIdx]);
       renderImportPreview();
-    } catch(err) {
-      alert('Could not read file. Please try saving as CSV from Excel/Google Sheets.');
-    }
+    } catch(err) { alert('Could not read file. Please try saving as CSV.'); }
   };
   reader.readAsArrayBuffer(file);
 }
@@ -1064,7 +836,7 @@ function processFile(file) {
 function renderImportPreview() {
   const area = document.getElementById('import-preview-area');
   if (!importPreviewWines?.length) {
-    area.innerHTML = '<p style="color:var(--red);margin-top:14px">No wines found. Check that your file has the right columns.</p>';
+    area.innerHTML = '<p style="color:var(--red);margin-top:14px">No wines found.</p>';
     return;
   }
   const preview = importPreviewWines.slice(0,8);
@@ -1076,78 +848,40 @@ function renderImportPreview() {
       </div>
       <div class="tbl-wrap">
         <table>
-          <thead><tr>${['Winery','Varietal','Vineyard','Vintage','Location','Can Drink','Drink By','Qty','Score'].map(h=>`<th>${h}</th>`).join('')}</tr></thead>
-          <tbody>${preview.map(w=>`<tr><td>${esc(w.winery)}</td><td>${esc(w.varietal)}</td><td>${esc(w.vineyard)}</td><td>${w.vintage}</td><td>${esc(w.location)}</td><td>${w.can_drink||''}</td><td>${w.drink_by||''}</td><td>${w.quantity}</td><td>${w.score||'—'}</td></tr>`).join('')}</tbody>
+          <thead><tr>${['Winery','Varietal','Vineyard','Vintage','Location','Qty'].map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+          <tbody>${preview.map(w=>`<tr><td>${esc(w.winery)}</td><td>${esc(w.varietal)}</td><td>${esc(w.vineyard)}</td><td>${w.vintage}</td><td>${esc(w.location)}</td><td>${w.quantity}</td></tr>`).join('')}</tbody>
         </table>
       </div>
-      ${importPreviewWines.length>8?`<div style="font-size:.79rem;color:var(--text-light);margin-bottom:12px">…and ${importPreviewWines.length-8} more wines</div>`:''}
+      ${importPreviewWines.length>8?`<div style="font-size:.79rem;color:var(--text-light);margin-bottom:12px">…and ${importPreviewWines.length-8} more</div>`:''}
       <div class="imp-opts">
         <div class="imp-opt-label">Import Mode</div>
         <div class="imp-opt-row">
-          <label><input type="radio" name="imp-mode" value="append" checked onchange="importMode='append'"/> Add to existing cellar (${wines.length} wines currently)</label>
-          <label><input type="radio" name="imp-mode" value="replace" onchange="importMode='replace'"/> Replace all — clear cellar and start fresh</label>
+          <label><input type="radio" name="imp-mode" value="append" checked onchange="importMode='append'"/> Add to existing cellar</label>
+          <label><input type="radio" name="imp-mode" value="replace" onchange="importMode='replace'"/> Replace all — start fresh</label>
         </div>
-      </div>
-      <div id="imp-prog-wrap" style="display:none">
-        <div class="prog-bar-wrap"><div class="prog-bar" id="imp-prog" style="width:0%"></div></div>
-        <div class="imp-status" id="imp-status">Importing…</div>
       </div>
       <div class="btn-row" id="imp-btn-row">
         <button class="btn btn-p" onclick="doImport()">📥 Import ${importPreviewWines.length} wines</button>
         <button class="btn btn-s" onclick="importPreviewWines=null;document.getElementById('import-preview-area').innerHTML=''">Cancel</button>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
 async function doImport() {
   if (!importPreviewWines?.length) return;
-  document.getElementById('imp-btn-row').style.display='none';
-  document.getElementById('imp-prog-wrap').style.display='block';
-
   if (importMode==='replace') wines = [];
-  const total = importPreviewWines.length;
-  for (let i=0; i<total; i++) {
-    wines.push(importPreviewWines[i]);
-    if (i % 10 === 0) {
-      const pct = Math.round((i/total)*100);
-      document.getElementById('imp-prog').style.width = pct+'%';
-      document.getElementById('imp-status').textContent = `Importing… ${pct}%`;
-      await new Promise(r=>setTimeout(r,10));
-    }
-  }
-  document.getElementById('imp-prog').style.width='100%';
-  saveWines();
-  renderCellar();
-  importPreviewWines = null;
-
-  document.getElementById('import-preview-area').innerHTML = `
-    <div class="imp-success">
-      ✅ <strong>Import complete!</strong> ${total} wines added to your cellar. Switch to the Cellar tab to browse them.
-    </div>`;
+  importPreviewWines.forEach(w => wines.push(w));
+  saveWines(); renderCellar(); importPreviewWines = null;
+  document.getElementById('import-preview-area').innerHTML =
+    `<div class="imp-success">✅ <strong>Import complete!</strong> Switch to the Cellar tab to browse.</div>`;
 }
-
-// ── Utility ────────────────────────────────────────────────────────────────
-function esc(str) {
-  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── Note about AI ──────────────────────────────────────────────────────────
-// The Claude AI insights feature requires an API key. Direct browser calls
-// to the Anthropic API are blocked by CORS. To enable it, you need a simple
-// backend proxy (Cloudflare Worker, Vercel function, etc.) that injects your
-// API key. The getInsights() function above is already wired up — just change
-// the fetch URL to point to your proxy endpoint.
 
 // ── Sort ───────────────────────────────────────────────────────────────────
-let sortField = 'winery';
-let sortDir = 'asc';
+let sortField = 'winery', sortDir = 'asc';
 
 function setSortField(field) {
   sortField = field;
-  document.querySelectorAll('.sort-btn[id^="sort-"]').forEach(b => {
-    if (!b.id.startsWith('sort-dir')) b.classList.remove('active');
-  });
+  document.querySelectorAll('.sort-btn[id^="sort-"]').forEach(b => { if (!b.id.startsWith('sort-dir')) b.classList.remove('active'); });
   document.getElementById('sort-' + field).classList.add('active');
   renderSortTab();
 }
@@ -1162,33 +896,19 @@ function setSortDir(dir) {
 function renderSortTab() {
   const fieldLabels = {winery:'Winery', varietal:'Varietal', vintage:'Vintage', can_drink:'Can Drink', drink_by:'Drink By', quantity:'Quantity', location:'Location'};
   const sorted = [...wines].sort((a, b) => {
-    let va = a[sortField] ?? (sortDir === 'asc' ? Infinity : -Infinity);
-    let vb = b[sortField] ?? (sortDir === 'asc' ? Infinity : -Infinity);
+    let va = a[sortField] ?? (sortDir==='asc' ? Infinity : -Infinity);
+    let vb = b[sortField] ?? (sortDir==='asc' ? Infinity : -Infinity);
     if (typeof va === 'string') va = va.toLowerCase();
     if (typeof vb === 'string') vb = vb.toLowerCase();
-    if (va < vb) return sortDir === 'asc' ? -1 : 1;
-    if (va > vb) return sortDir === 'asc' ? 1 : -1;
+    if (va < vb) return sortDir==='asc' ? -1 : 1;
+    if (va > vb) return sortDir==='asc' ? 1 : -1;
     return 0;
   });
-
-  document.getElementById('sort-summary').style.color = '#3D1515';
-  document.getElementById('sort-summary').style.fontWeight = '600';
   document.getElementById('sort-summary').textContent =
-    `Sorted by ${fieldLabels[sortField]} · ${sortDir === 'asc' ? 'A → Z / Low → High' : 'Z → A / High → Low'} · ${sorted.length} wines`;
-
-  const grid = document.getElementById('sort-results-grid');
-  grid.innerHTML = sorted.map(w => {
+    `Sorted by ${fieldLabels[sortField]} · ${sortDir==='asc'?'A → Z / Low → High':'Z → A / High → Low'} · ${sorted.length} wines`;
+  document.getElementById('sort-summary').style.cssText = 'background:var(--cream);border-radius:var(--r);padding:12px 16px;font-size:.88rem;color:#3D1515;font-weight:600;border-left:3px solid var(--gold)';
+  document.getElementById('sort-results-grid').innerHTML = sorted.map(w => {
     const ds = drinkStatus(w);
-    const fieldVal = {
-      winery: w.winery,
-      varietal: w.varietal,
-      vintage: w.vintage,
-      can_drink: w.can_drink ? 'Drink from ' + w.can_drink : null,
-      drink_by: w.drink_by ? 'Drink by ' + w.drink_by : null,
-      quantity: w.quantity + ' bottle' + (w.quantity !== 1 ? 's' : ''),
-      location: w.location || null
-    }[sortField];
-
     return `<div class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
       <div class="card-head">
         <div class="card-badge">${esc(w.varietal||'Wine')}</div>
@@ -1201,7 +921,6 @@ function renderSortTab() {
         <div class="card-winery">${esc(w.winery)}</div>
         ${w.vineyard?`<div class="card-vineyard">${esc(w.vineyard)}</div>`:''}
         <div class="card-meta">
-          ${fieldVal ? `<div class="meta-item" style="color:var(--bur);font-weight:600">↕ ${esc(String(fieldVal))}</div>` : ''}
           ${(w.can_drink||w.drink_by)?`<div class="meta-item">🗓 ${w.can_drink||'?'}–${w.drink_by||'?'}</div>`:''}
         </div>
       </div>
@@ -1223,49 +942,42 @@ function populateSearchVarietal() {
 }
 
 function runAdvSearch() {
-  const winery = document.getElementById('s-winery').value.toLowerCase().trim();
-  const varietal = document.getElementById('s-varietal').value;
+  const winery     = document.getElementById('s-winery').value.toLowerCase().trim();
+  const varietal   = document.getElementById('s-varietal').value;
   const vintageMin = parseInt(document.getElementById('s-vintage-min').value) || null;
   const vintageMax = parseInt(document.getElementById('s-vintage-max').value) || null;
-  const canDrinkMin = parseInt(document.getElementById('s-candrink-min').value) || null;
-  const canDrinkMax = parseInt(document.getElementById('s-candrink-max').value) || null;
-  const drinkByMin = parseInt(document.getElementById('s-drinkby-min').value) || null;
-  const drinkByMax = parseInt(document.getElementById('s-drinkby-max').value) || null;
-
-  const hasFilter = winery || varietal || vintageMin || vintageMax || canDrinkMin || canDrinkMax || drinkByMin || drinkByMax;
-
-  const results = wines.filter(w => {
-    if (winery && !w.winery?.toLowerCase().includes(winery)) return false;
-    if (varietal && w.varietal !== varietal) return false;
-    if (vintageMin && (w.vintage || 0) < vintageMin) return false;
-    if (vintageMax && (w.vintage || 0) > vintageMax) return false;
-    if (canDrinkMin && (w.can_drink || 0) < canDrinkMin) return false;
-    if (canDrinkMax && (w.can_drink || 0) > canDrinkMax) return false;
-    if (drinkByMin && (w.drink_by || 0) < drinkByMin) return false;
-    if (drinkByMax && (w.drink_by || 0) > drinkByMax) return false;
+  const canMin     = parseInt(document.getElementById('s-candrink-min').value) || null;
+  const canMax     = parseInt(document.getElementById('s-candrink-max').value) || null;
+  const dbMin      = parseInt(document.getElementById('s-drinkby-min').value) || null;
+  const dbMax      = parseInt(document.getElementById('s-drinkby-max').value) || null;
+  const hasFilter  = winery||varietal||vintageMin||vintageMax||canMin||canMax||dbMin||dbMax;
+  const results    = wines.filter(w => {
+    if (winery    && !w.winery?.toLowerCase().includes(winery)) return false;
+    if (varietal  && w.varietal !== varietal) return false;
+    if (vintageMin && (w.vintage||0)   < vintageMin) return false;
+    if (vintageMax && (w.vintage||0)   > vintageMax) return false;
+    if (canMin    && (w.can_drink||0)  < canMin)     return false;
+    if (canMax    && (w.can_drink||0)  > canMax)     return false;
+    if (dbMin     && (w.drink_by||0)   < dbMin)      return false;
+    if (dbMax     && (w.drink_by||0)   > dbMax)      return false;
     return true;
   });
-
   const countEl = document.getElementById('search-results-count');
-  const grid = document.getElementById('search-results-grid');
-
+  const grid    = document.getElementById('search-results-grid');
   if (!hasFilter) {
     countEl.style.display = 'none';
-    grid.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-light);font-style:italic">Enter search criteria above to find wines</div>';
+    grid.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-light);font-style:italic">Enter search criteria above</div>';
     return;
   }
-
   countEl.style.display = 'block';
   countEl.textContent = results.length + ' wine' + (results.length !== 1 ? 's' : '') + ' found';
-
   if (results.length === 0) {
-    grid.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-light);font-style:italic">No wines match your criteria</div>';
+    grid.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-light);font-style:italic">No wines match</div>';
     return;
   }
-
   grid.innerHTML = results.map(w => {
     const ds = drinkStatus(w);
-    return `<div id="card-s-${w.id}" class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
+    return `<div class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
       <div class="card-head">
         <div class="card-badge">${esc(w.varietal||'Wine')}</div>
         <div class="card-right">
@@ -1289,239 +1001,21 @@ function runAdvSearch() {
 }
 
 function clearAdvSearch() {
-  ['s-winery','s-vintage-min','s-vintage-max','s-candrink-min','s-candrink-max','s-drinkby-min','s-drinkby-max'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
+  ['s-winery','s-vintage-min','s-vintage-max','s-candrink-min','s-candrink-max','s-drinkby-min','s-drinkby-max']
+    .forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('s-varietal').value = '';
   runAdvSearch();
 }
 
-// -- Export CSV -----------------------------------------------------------
-function exportCSV() {
-  var headers = ['Winery','Varietal','Vineyard','Year','Location','Can Drink','Drink By','Qty','Score','Notes'];
-  function esc(v) {
-    if (v === null || v === undefined || v === '') return '';
-    var s = String(v);
-    if (s.indexOf(',') >= 0 || s.indexOf('"') >= 0 || s.indexOf('\n') >= 0)
-      return '"' + s.replace(/"/g, '""') + '"';
-    return s;
-  }
-  var rows = wines.map(function(w) {
-    return [esc(w.winery),esc(w.varietal),esc(w.vineyard),esc(w.vintage),
-            esc(w.location),esc(w.can_drink),esc(w.drink_by),esc(w.quantity||1),
-            esc(w.score),esc(w.notes)].join(',');
-  });
-  var csv = [headers.join(',')].concat(rows).join('\n');
-  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'cave-privee-' + new Date().toISOString().slice(0,10) + '.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showSyncBadge('Downloaded ' + wines.length + ' wines');
+// ── Utility ────────────────────────────────────────────────────────────────
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-
-// ── Auth ───────────────────────────────────────────────────────────────────
-const ADMIN_EMAIL = 'jjb94941@gmail.com';
-let supabaseClient = null;
-let currentUser = null;
-let currentCellarOwner = null; // whose wines to load
-
-function initSupabase() {
-  if (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_KEY) {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-}
-
-function showAuthPanel(panel) {
-  ['login','register','forgot','pending'].forEach(p => {
-    document.getElementById('auth-' + p).style.display = p === panel ? 'block' : 'none';
-  });
-}
-
-function toggleCellarType(val) {
-  document.getElementById('join-cellar-section').style.display = val === 'join' ? 'block' : 'none';
-}
-
-async function checkAuthState() {
-  if (!supabaseClient) { showApp(); return; }
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    await onUserSignedIn(session.user);
-  } else {
-    showAuthOverlay();
-  }
-}
-
-function showAuthOverlay() {
-  document.getElementById('auth-overlay').style.display = 'block';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('user-bar').style.display = 'none';
-  showAuthPanel('login');
-}
-
-async function showApp() {
-  document.getElementById('auth-overlay').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  if (currentUser) {
-    document.getElementById('user-bar').style.display = 'flex';
-    document.getElementById('user-bar-email').textContent = currentUser.email;
-  }
-}
-
-async function onUserSignedIn(user) {
-  currentUser = user;
-  // Check approval status in user_profiles table
-  const { data, error } = await supabaseClient
-    .from('user_profiles')
-    .select('*')
-    .eq('user_id', user.id)
-    .single();
-
-  if (error || !data) {
-    // No profile yet — create one
-    await supabaseClient.from('user_profiles').insert({
-      user_id: user.id,
-      email: user.email,
-      status: 'pending',
-      cellar_type: 'own',
-      cellar_owner_id: null
-    });
-    showAuthPanel('pending');
-    document.getElementById('auth-pending-msg').textContent = 
-      'Your account is awaiting approval from the administrator. You will receive an email once approved.';
-    document.getElementById('auth-overlay').style.display = 'block';
-    document.getElementById('app').style.display = 'none';
-    return;
-  }
-
-  if (data.status !== 'approved') {
-    showAuthPanel('pending');
-    document.getElementById('auth-pending-msg').textContent = 
-      data.status === 'pending' 
-        ? 'Your account is awaiting approval. You will receive an email once approved.'
-        : 'Your access request is awaiting approval from the cellar owner.';
-    document.getElementById('auth-overlay').style.display = 'block';
-    document.getElementById('app').style.display = 'none';
-    return;
-  }
-
-  // Approved — set cellar owner context
-  if (data.cellar_type === 'join' && data.cellar_owner_id) {
-    currentCellarOwner = data.cellar_owner_id;
-  } else {
-    currentCellarOwner = user.id;
-  }
-
-  await showApp();
-}
-
-async function authSignIn() {
-  if (!supabaseClient) { showApp(); return; }
-  const email = document.getElementById('auth-email').value.trim();
-  const password = document.getElementById('auth-password').value;
-  const msg = document.getElementById('auth-login-msg');
-  msg.textContent = 'Signing in...';
-  msg.style.color = 'rgba(245,239,230,.7)';
-
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) {
-    msg.style.color = '#FFB3B3';
-    msg.textContent = error.message;
-    return;
-  }
-  await onUserSignedIn(data.user);
-}
-
-async function authRegister() {
-  if (!supabaseClient) { showApp(); return; }
-  const email = document.getElementById('reg-email').value.trim();
-  const password = document.getElementById('reg-password').value;
-  const cellarType = document.querySelector('input[name="cellar-type"]:checked').value;
-  const ownerEmail = document.getElementById('reg-owner-email').value.trim();
-  const msg = document.getElementById('auth-reg-msg');
-
-  if (!email || !password) { msg.textContent = 'Please fill in all fields.'; return; }
-  if (password.length < 8) { msg.textContent = 'Password must be at least 8 characters.'; return; }
-  if (cellarType === 'join' && !ownerEmail) { msg.textContent = 'Please enter the owner email.'; return; }
-
-  msg.style.color = 'rgba(245,239,230,.7)';
-  msg.textContent = 'Creating account...';
-
-  const { data, error } = await supabaseClient.auth.signUp({ email, password });
-  if (error) { msg.style.color = '#FFB3B3'; msg.textContent = error.message; return; }
-
-  // Store registration request
-  await supabaseClient.from('user_profiles').upsert({
-    user_id: data.user.id,
-    email: email,
-    status: 'pending',
-    cellar_type: cellarType,
-    requested_owner_email: cellarType === 'join' ? ownerEmail : null,
-    cellar_owner_id: null
-  });
-
-  // Notify admin via edge function
-  await fetch(SUPABASE_URL + '/functions/v1/super-function', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
-    body: JSON.stringify({ 
-      action: 'notify_registration',
-      new_user_email: email,
-      cellar_type: cellarType,
-      owner_email: ownerEmail || null,
-      user_id: data.user.id
-    })
-  }).catch(() => {});
-
-  showAuthPanel('pending');
-  document.getElementById('auth-pending-msg').textContent = 
-    'Account created! ' + (cellarType === 'join' 
-      ? 'The cellar owner (' + ownerEmail + ') will receive an approval request. Check your email to verify your account first.'
-      : 'The administrator will approve your account shortly. Check your email to verify your account.');
-}
-
-async function authForgotPassword() {
-  if (!supabaseClient) return;
-  const email = document.getElementById('forgot-email').value.trim();
-  const msg = document.getElementById('auth-forgot-msg');
-  if (!email) { msg.style.color = '#FFB3B3'; msg.textContent = 'Please enter your email.'; return; }
-  
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.href
-  });
-  if (error) { msg.style.color = '#FFB3B3'; msg.textContent = error.message; return; }
-  msg.style.color = '#B3FFB3';
-  msg.textContent = 'Reset link sent! Check your email.';
-}
-
-async function authSignOut() {
-  if (supabaseClient) await supabaseClient.auth.signOut();
-  currentUser = null;
-  currentCellarOwner = null;
-  showAuthOverlay();
-}
-
-// -- Init ------------------------------------------------------------------
-initSupabase();
-if (supabaseClient) {
-  checkAuthState();
-} else {
-  showApp();
-  loadWines();
-}
-
-// Make showApp also load wines
-const _origShowApp = showApp;
-showApp = async function() {
-  await _origShowApp();
-  loadWines();
-};
+// ── Init ───────────────────────────────────────────────────────────────────
+// Load local cache immediately so UI is instant, then sync from Sheets
+loadLocal();
+syncFromSheets();
 </script>
 </body>
 </html>
