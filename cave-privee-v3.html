@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cave Privée – Wine Cellar</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bur:#6B1A2A;--bur-deep:#4A0F1C;--bur-mid:#7D2035;--bur-light:#8B2535;
+  --gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#F5E9C8;
+  --cream:#F5EFE6;--cream-dark:#EDE3D4;--cream-mid:#F0E8DB;
+  --text-dark:#2D1A1A;--text-mid:#5C3D3D;--text-light:#9C7A7A;
+  --white:#FDFAF6;--green:#34C759;--orange:#FF9500;--red:#FF3B30;
+  --shadow:0 4px 24px rgba(107,26,42,.13);--shadow-lg:0 8px 40px rgba(107,26,42,.2);
+  --r:12px;--rl:18px;
+}
+body{font-family:'Cormorant Garamond',Georgia,serif;background:var(--cream);color:var(--text-dark);min-height:100vh;font-size:18px}
+.app{max-width:900px;margin:0 auto;padding:0 14px 90px}
+.header{background:linear-gradient(140deg,var(--bur-deep) 0%,var(--bur) 55%,var(--bur-light) 100%);margin:0 -14px 24px;padding:26px 22px 22px;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50px;right:-50px;width:220px;height:220px;border-radius:50%;background:rgba(201,168,76,.1)}
+.header::after{content:'';position:absolute;bottom:-80px;left:20%;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.03)}
+.header-inner{position:relative;z-index:1}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo-icon{font-size:2rem}
+.logo-title{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--cream);letter-spacing:.02em;line-height:1.1}
+.logo-sub{font-size:.75rem;color:var(--gold-light);letter-spacing:.14em;text-transform:uppercase;font-weight:300}
+.header-stats{display:flex;gap:22px;border-top:1px solid rgba(201,168,76,.2);padding-top:16px}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--gold);line-height:1}
+.stat-label{font-size:.8rem;color:rgba(245,239,230,.95);text-transform:uppercase;letter-spacing:.09em;font-weight:600}
+.tabs{display:flex;gap:3px;margin-bottom:18px;background:var(--cream-dark);border-radius:var(--r);padding:4px}
+.tab{flex:1;padding:9px 4px;border:none;background:transparent;border-radius:10px;font-family:'Cormorant Garamond',serif;font-size:1rem;color:#3D1515;cursor:pointer;transition:all .2s;font-weight:700;letter-spacing:.02em}
+.tab.active{background:var(--bur);color:var(--cream);box-shadow:0 2px 8px rgba(107,26,42,.3)}
+.tab:disabled{opacity:.35;cursor:default}
+.controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.search-box{flex:1;min-width:160px;padding:10px 13px;border:1.5px solid var(--cream-dark);border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:1rem;background:var(--white);color:var(--text-dark);outline:none;transition:border-color .2s}
+.search-box:focus{border-color:var(--bur)}
+.filter-sel{padding:10px 11px;border:1.5px solid var(--cream-dark);border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:.92rem;background:var(--white);color:var(--text-dark);cursor:pointer;outline:none}
+.wine-grid{display:grid;gap:13px}
+@media(min-width:580px){.wine-grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--white);border-radius:var(--rl);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;border:1.5px solid transparent;transition:transform .18s,box-shadow .18s}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.card.sel{border-color:var(--bur)}
+.card-head{background:linear-gradient(135deg,var(--bur-deep),var(--bur-mid));padding:13px 17px;display:flex;align-items:flex-start;justify-content:space-between}
+.card-badge{background:rgba(107,26,42,.12);color:#4A0F1C;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid rgba(107,26,42,.25);font-weight:700;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.card-vintage{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--gold);line-height:1}
+.status-pill{font-size:.75rem;padding:2px 8px;border-radius:10px;font-weight:700;color:white}
+.card-body{padding:13px 17px}
+.card-winery{font-family:'Playfair Display',serif;font-size:1.15rem;color:#1A0A0A;font-weight:700;margin-bottom:2px}
+.card-vineyard{font-size:.94rem;color:#5C2020;font-weight:600;margin-bottom:9px;font-style:italic}
+.card-meta{display:flex;gap:12px;flex-wrap:wrap}
+.meta-item{display:flex;align-items:center;gap:3px;font-size:.92rem;color:#3D1515;font-weight:600}
+.card-foot{padding:9px 17px;background:var(--cream-mid);border-top:1px solid var(--cream-dark);display:flex;align-items:center;justify-content:space-between}
+.card-loc{font-size:.9rem;color:#3D1515;font-weight:600;display:flex;align-items:center;gap:4px}
+.card-qty{background:var(--bur);color:var(--cream);font-size:.82rem;padding:3px 9px;border-radius:20px}
+.empty{text-align:center;padding:52px 20px;color:var(--text-light)}
+.empty-icon{font-size:2.6rem;margin-bottom:12px;opacity:.4}
+.empty-title{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:7px;color:var(--text-mid)}
+.empty-sub{font-size:.9rem}
+.fab{position:fixed;bottom:22px;right:22px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--bur-light),var(--bur-deep));color:var(--cream);border:none;font-size:1.5rem;box-shadow:0 4px 20px rgba(107,26,42,.45);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .18s;z-index:100}
+.fab:hover{transform:scale(1.08)}
+.overlay{position:fixed;inset:0;background:rgba(28,14,14,.65);backdrop-filter:blur(4px);display:flex;align-items:flex-end;z-index:200;animation:fi .2s ease}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+@media(min-width:580px){.overlay{align-items:center}}
+.modal{background:var(--white);border-radius:var(--rl) var(--rl) 0 0;width:100%;max-height:93vh;overflow-y:auto;padding:22px 20px 34px;animation:su .28s cubic-bezier(.34,1.56,.64,1)}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(min-width:580px){.modal{border-radius:var(--rl);width:auto;min-width:460px;max-width:560px;margin:auto;animation:none}}
+.modal-handle{width:34px;height:4px;background:var(--cream-dark);border-radius:2px;margin:0 auto 18px;display:block}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--bur);margin-bottom:18px}
+.form-grid{display:grid;gap:13px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:.88rem;text-transform:uppercase;letter-spacing:.08em;color:#3D1515;font-weight:700}
+.fi,.fs,.ft{padding:10px 12px;border:1.5px solid var(--cream-dark);border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:1rem;background:var(--cream);color:var(--text-dark);outline:none;transition:border-color .2s;width:100%}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--bur);background:var(--white)}
+.ft{resize:vertical;min-height:70px}
+.btn{padding:10px 20px;border:none;border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:1rem;cursor:pointer;font-weight:600;transition:all .18s;letter-spacing:.02em}
+.btn-p{background:linear-gradient(135deg,var(--bur-light),var(--bur-deep));color:var(--cream);box-shadow:0 3px 12px rgba(107,26,42,.32)}
+.btn-p:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 18px rgba(107,26,42,.42)}
+.btn-s{background:var(--cream-dark);color:var(--text-mid)}
+.btn-d{background:#FF3B30;color:white}
+.btn-g{background:linear-gradient(135deg,var(--gold),#A87C2A);color:var(--text-dark);font-weight:700}
+.btn-sm{padding:6px 12px;font-size:.84rem}
+.btn-row{display:flex;gap:9px;margin-top:6px;flex-wrap:wrap}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.det-hero{background:linear-gradient(135deg,var(--bur-deep),var(--bur));border-radius:var(--rl);padding:20px;margin-bottom:18px;color:var(--cream)}
+.det-varietal{font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(245,239,230,.9);margin-bottom:3px;font-weight:600}
+.det-winery{font-family:'Playfair Display',serif;font-size:1.65rem;margin-bottom:2px}
+.det-vineyard{font-style:italic;color:rgba(245,239,230,.95);font-size:1.05rem;margin-bottom:4px;font-weight:500}
+.det-vintage{font-family:'Playfair Display',serif;font-size:2.1rem;color:var(--gold);margin-top:5px}
+.det-actions{display:flex;gap:7px}
+.sec-title{font-family:'Playfair Display',serif;font-size:.92rem;text-transform:uppercase;letter-spacing:.1em;color:#4A0F1C;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--cream-dark)}
+.sec{margin-bottom:20px}
+.insight-card{background:linear-gradient(135deg,var(--bur-deep),var(--bur));border-radius:var(--r);padding:16px;margin-bottom:12px;color:var(--cream)}
+.ins-score{font-family:'Playfair Display',serif;font-size:2.7rem;color:var(--gold);line-height:1;margin-bottom:3px}
+.ins-score-label{font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(245,239,230,.8)}
+.dw{background:var(--cream);border-radius:var(--r);padding:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;border:1px solid var(--cream-dark);margin-bottom:11px}
+.dw-item{text-align:center;flex:1;min-width:68px}
+.dw-year{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--bur)}
+.dw-label{font-size:.9rem;text-transform:uppercase;letter-spacing:.08em;color:#5C3D3D;font-weight:600}
+.food-tags{display:flex;gap:6px;flex-wrap:wrap}
+.food-tag{background:var(--cream-dark);color:var(--text-mid);padding:4px 11px;border-radius:20px;font-size:.94rem}
+.df{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--cream-dark);font-size:1.05rem}
+.df:last-child{border-bottom:none}
+.dfl{color:#3D1515;font-weight:600}
+.dfv{color:#1A0A0A;font-weight:700;text-align:right;max-width:60%}
+.note-box{background:var(--cream);border-radius:var(--r);padding:12px;font-style:italic;color:#3D1515;border-left:3px solid var(--gold);font-size:1.05rem;line-height:1.6;font-weight:500}
+.imp-panel{background:var(--white);border-radius:var(--rl);padding:24px;box-shadow:var(--shadow)}
+.imp-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--bur);margin-bottom:7px}
+.imp-sub{font-size:1rem;color:#3D1515;margin-bottom:20px;line-height:1.65;font-weight:500}
+.drop-zone{border:2px dashed var(--bur-light);border-radius:var(--rl);padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--cream);position:relative}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--gold);background:rgba(201,168,76,.07)}
+.drop-icon{font-size:2.3rem;margin-bottom:10px;opacity:.6}
+.drop-text{font-size:.97rem;color:var(--text-mid);margin-bottom:5px}
+.drop-hint{font-size:.78rem;color:var(--text-light)}
+.prev-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:9px}
+.prev-count{font-family:'Playfair Display',serif;font-size:1.15rem;color:#1A0A0A}
+.prev-count span{color:var(--bur)}
+.tbl-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--cream-dark);margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:.94rem}
+th{background:var(--bur);color:var(--cream);padding:8px 11px;text-align:left;font-weight:500;letter-spacing:.04em;white-space:nowrap}
+td{padding:7px 11px;border-bottom:1px solid var(--cream-dark);white-space:nowrap;color:var(--text-dark)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--cream)}
+.imp-opts{background:var(--cream);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
+.imp-opt-label{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:#3D1515;font-weight:700;margin-bottom:9px}
+.imp-opt-row{display:flex;flex-direction:column;gap:9px}
+.imp-opt-row label{display:flex;align-items:center;gap:9px;font-size:1.05rem;color:#3D1515;font-weight:600;cursor:pointer}
+.imp-opt-row input[type=radio]{accent-color:var(--bur);width:15px;height:15px}
+.prog-bar-wrap{background:var(--cream-dark);border-radius:4px;height:7px;overflow:hidden;margin:11px 0}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--bur),var(--bur-light));border-radius:4px;transition:width .25s}
+.imp-status{font-size:.84rem;color:var(--text-mid);margin-top:6px}
+.imp-success{background:#E8F5E9;border:1px solid #4CAF50;border-radius:var(--r);padding:12px 16px;color:#2E7D32;font-size:.91rem;margin-top:13px}
+.spinner{display:inline-block;width:17px;height:17px;border:2px solid rgba(255,255,255,.28);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.notice{background:linear-gradient(135deg,#FFF8E7,#FFF3D0);border:1.5px solid var(--gold);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;font-size:1rem;color:#4A3000;font-weight:500;line-height:1.6}
+.notice strong{color:#5A3D00}
+.sort-btn{padding:10px 14px;border:2px solid var(--bur);border-radius:var(--r);font-family:'Cormorant Garamond',serif;font-size:1.05rem;background:var(--white);color:#3D1515;cursor:pointer;transition:all .2s;text-align:center;font-weight:700}
+.sort-btn:hover{border-color:var(--bur);color:var(--bur);background:var(--cream)}
+.sort-btn.active{background:var(--bur);color:var(--cream);border-color:var(--bur);box-shadow:0 2px 8px rgba(107,26,42,.3)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">🍷</div>
+        <div>
+          <div class="logo-title">Cave Privée</div>
+          <div class="logo-sub">Personal Wine Cellar</div>
+        </div>
+      </div>
+      <div class="header-stats">
+        <div class="stat"><div class="stat-num" id="stat-labels">0</div><div class="stat-label">Labels</div></div>
+        <div class="stat"><div class="stat-num" id="stat-bottles">0</div><div class="stat-label">Bottles</div></div>
+        <div class="stat"><div class="stat-num" id="stat-varietals">0</div><div class="stat-label">Varietals</div></div>
+        <div class="stat"><div class="stat-num" id="stat-ready">0</div><div class="stat-label">Ready Now</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice" id="sync-notice"><strong>☁️ Loading from Google Sheets…</strong></div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('cellar')">🗄 Cellar</button>
+    <button class="tab" id="tab-detail" onclick="switchTab('detail')" disabled>📋 Detail</button>
+    <button class="tab" onclick="switchTab('search')">🔍 Search</button>
+    <button class="tab" onclick="switchTab('sort')">↕ Sort</button>
+    <button class="tab" onclick="switchTab('import')">📥 Import</button>
+  </div>
+
+  <!-- CELLAR TAB -->
+  <div id="view-cellar">
+    <div class="controls">
+      <input class="search-box" id="search" placeholder="Search winery, varietal, location…" oninput="renderCellar()"/>
+      <select class="filter-sel" id="filter" onchange="renderCellar()">
+        <option value="">All varietals</option>
+      </select>
+    </div>
+    <div class="wine-grid" id="wine-grid"></div>
+  </div>
+
+  <!-- DETAIL TAB -->
+  <div id="view-detail" style="display:none"></div>
+
+  <!-- SEARCH TAB -->
+  <div id="view-search" style="display:none">
+    <div class="imp-panel">
+      <div class="imp-title">🔍 Advanced Search</div>
+      <div class="imp-sub" style="margin-bottom:16px">Filter your cellar by any combination of fields.</div>
+      <div style="display:grid;gap:14px">
+        <div>
+          <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Winery</label>
+          <input class="search-box" id="s-winery" placeholder="e.g. Williams Selyem" oninput="runAdvSearch()" style="width:100%"/>
+        </div>
+        <div>
+          <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Varietal</label>
+          <select class="filter-sel" id="s-varietal" onchange="runAdvSearch()" style="width:100%">
+            <option value="">All varietals</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Vintage from</label>
+            <input class="search-box" id="s-vintage-min" type="number" placeholder="e.g. 2010" oninput="runAdvSearch()" style="width:100%"/>
+          </div>
+          <div>
+            <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Vintage to</label>
+            <input class="search-box" id="s-vintage-max" type="number" placeholder="e.g. 2020" oninput="runAdvSearch()" style="width:100%"/>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Can drink from</label>
+            <input class="search-box" id="s-candrink-min" type="number" placeholder="e.g. 2024" oninput="runAdvSearch()" style="width:100%"/>
+          </div>
+          <div>
+            <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Can drink to</label>
+            <input class="search-box" id="s-candrink-max" type="number" placeholder="e.g. 2027" oninput="runAdvSearch()" style="width:100%"/>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Drink by from</label>
+            <input class="search-box" id="s-drinkby-min" type="number" placeholder="e.g. 2026" oninput="runAdvSearch()" style="width:100%"/>
+          </div>
+          <div>
+            <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Drink by to</label>
+            <input class="search-box" id="s-drinkby-max" type="number" placeholder="e.g. 2030" oninput="runAdvSearch()" style="width:100%"/>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-p" onclick="runAdvSearch()" style="flex:1">🔍 Search</button>
+          <button class="btn btn-s" onclick="clearAdvSearch()" style="flex:1">✕ Clear</button>
+        </div>
+      </div>
+      <div id="search-results-count" style="margin-top:20px;font-size:.85rem;color:var(--text-light);display:none"></div>
+      <div class="wine-grid" id="search-results-grid" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <!-- SORT TAB -->
+  <div id="view-sort" style="display:none">
+    <div class="imp-panel">
+      <div class="imp-title">↕ Sort Cellar</div>
+      <div class="imp-sub" style="margin-bottom:20px">Choose a field and direction to sort your entire cellar.</div>
+      <div style="display:grid;gap:12px">
+        <div>
+          <label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.09em;color:var(--text-dark);font-weight:600;display:block;margin-bottom:8px">Sort by</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+            <button class="sort-btn active" id="sort-winery" onclick="setSortField('winery')">🏠 Winery</button>
+            <button class="sort-btn" id="sort-varietal" onclick="setSortField('varietal')">🍇 Varietal</button>
+            <button class="sort-btn" id="sort-vintage" onclick="setSortField('vintage')">📅 Vintage</button>
+            <button class="sort-btn" id="sort-can_drink" onclick="setSortField('can_drink')">✅ Can Drink</button>
+            <button class="sort-btn" id="sort-drink_by" onclick="setSortField('drink_by')">⏳ Drink By</button>
+            <button class="sort-btn" id="sort-quantity" onclick="setSortField('quantity')">🍾 Quantity</button>
+            <button class="sort-btn" id="sort-location" onclick="setSortField('location')">📦 Location</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:.75rem;text-transform:uppercase;letter-spacing:.09em;color:var(--text-dark);font-weight:600;display:block;margin-bottom:8px">Direction</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+            <button class="sort-btn active" id="sort-dir-asc" onclick="setSortDir('asc')">↑ Ascending</button>
+            <button class="sort-btn" id="sort-dir-desc" onclick="setSortDir('desc')">↓ Descending</button>
+          </div>
+        </div>
+        <div id="sort-summary" style="background:var(--cream);border-radius:var(--r);padding:12px 16px;font-size:.88rem;color:var(--text-mid);border-left:3px solid var(--gold)"></div>
+      </div>
+      <div class="wine-grid" id="sort-results-grid" style="margin-top:20px"></div>
+    </div>
+  </div>
+
+  <!-- IMPORT TAB -->
+  <div id="view-import" style="display:none">
+    <div class="imp-panel" style="margin-bottom:18px">
+      <div class="imp-title">📤 Export Cellar</div>
+      <div class="imp-sub">Download your entire cellar as a CSV file.</div>
+      <button class="btn btn-p" onclick="exportCSV()" style="width:100%;font-size:1rem">⬇️ Download CSV</button>
+    </div>
+    <div class="imp-panel" style="margin-bottom:18px">
+      <div class="imp-title">☁️ Google Sheets Sync</div>
+      <div class="imp-sub">Your cellar is stored in Google Sheets and syncs automatically on every change.</div>
+      <button class="btn btn-p" onclick="syncFromSheets()" style="width:100%;font-size:1rem">🔄 Reload from Google Sheets</button>
+    </div>
+    <div class="imp-panel">
+      <div class="imp-title">📥 Import from Spreadsheet</div>
+      <div class="imp-sub">Upload a CSV or Excel file to import wines.</div>
+      <input type="file" id="file-input" accept=".csv,.xlsx,.xlsm,.xls" style="display:none" onchange="handleFileInput(event)"/>
+      <div id="drop-area" class="drop-zone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)">
+        <div class="drop-icon">📂</div>
+        <div class="drop-text">Tap the button below to select your file</div>
+        <div class="drop-hint">Supports .csv · .xlsx · .xlsm</div>
+        <button class="btn btn-p" style="margin-top:16px;font-size:1.1rem;padding:14px 28px" onclick="document.getElementById('file-input').click()">📁 Choose File</button>
+      </div>
+      <div id="import-preview-area"></div>
+    </div>
+  </div>
+
+  <button class="fab" onclick="openAddModal()" title="Add wine">＋</button>
+
+  <div class="overlay" id="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <span class="modal-handle"></span>
+      <div class="modal-title" id="modal-title">Add to Cellar</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="fg"><label class="fl">Winery *</label><input class="fi" id="f-winery" placeholder="e.g. Williams Selyem"/></div>
+          <div class="fg"><label class="fl">Vintage *</label><input class="fi" id="f-vintage" type="number" placeholder="e.g. 2018"/></div>
+        </div>
+        <div class="fg"><label class="fl">Vineyard / Appellation</label><input class="fi" id="f-vineyard" placeholder="e.g. Bucher, Russian River"/></div>
+        <div class="form-row">
+          <div class="fg">
+            <label class="fl">Varietal *</label>
+            <select class="fs" id="f-varietal">
+              <option value="">Select…</option>
+              <option>Bordeaux Blend</option><option>Cab/Syrah</option><option>Cabernet Franc</option>
+              <option>Cabernet Sauvignon</option><option>Chardonnay</option><option>Dessert Zinfandel</option>
+              <option>Grenache</option><option>Johannesberg Riesling</option><option>Malbec</option>
+              <option>Meritage</option><option>Merlot</option><option>Muscat Canelli</option>
+              <option>Petite Syrah</option><option>Pinot Gris</option><option>Pinot Noir</option>
+              <option>Port</option><option>Red Blend</option><option>Rhone Blend</option>
+              <option>Rosé</option><option>Sangiovese</option><option>Sauvignon Blanc</option>
+              <option>Shiraz</option><option>Sweet</option><option>Syrah</option>
+              <option>Tempranillo</option><option>Zinfandel</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Location Code</label><input class="fi" id="f-location" placeholder="e.g. A-2-1, K38"/></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">Can Drink (year)</label><input class="fi" id="f-can-drink" type="number" placeholder="e.g. 2025"/></div>
+          <div class="fg"><label class="fl">Drink By (year)</label><input class="fi" id="f-drink-by" type="number" placeholder="e.g. 2030"/></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label class="fl">Quantity</label><input class="fi" id="f-quantity" type="number" min="1" value="1"/></div>
+          <div class="fg"><label class="fl">Score (/100)</label><input class="fi" id="f-score" type="number" min="1" max="100" placeholder="e.g. 93"/></div>
+        </div>
+        <div class="fg"><label class="fl">Personal Notes</label><textarea class="ft" id="f-notes" placeholder="Tasting notes, occasion, purchase details…"></textarea></div>
+        <div class="btn-row">
+          <button class="btn btn-p" id="save-btn" onclick="saveWine()">Add to Cellar</button>
+          <button class="btn btn-s" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-d btn-sm" id="delete-btn" onclick="deleteCurrentEdit()" style="display:none">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────
+const SHEETS_API = 'https://script.google.com/macros/s/AKfycbyUQ3j3pQciQI_YUfNJd4_jAk9eBO4v1rkSPybSWKDECMkPr6IMXQCCHSsm0y0hWqVI/exec';
+const CF_WORKER  = 'https://cave-privee-ai.jjb94941.workers.dev';
+
+// ── State ──────────────────────────────────────────────────────────────────
+let wines = [];
+let selectedWineId = null;
+let editingWineId  = null;
+let insights = {};
+let importPreviewWines = null;
+let importMode = 'append';
+let saveTimer = null;
+
+const YEAR = new Date().getFullYear();
+
+// ── Google Sheets sync ────────────────────────────────────────────────────
+async function syncFromSheets() {
+  updateNotice('☁️ Loading from Google Sheets…');
+  try {
+    const res = await fetch(SHEETS_API);
+    const rows = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0) {
+      updateNotice('⚠️ No data found in Google Sheets');
+      return;
+    }
+    wines = rows.map((r, i) => ({
+      id: String(i + 1),
+      winery:    String(r['Winery']    || r['winery']    || ''),
+      varietal:  String(r['Varietal']  || r['varietal']  || ''),
+      vineyard:  String(r['Vineyard']  || r['vineyard']  || ''),
+      vintage:   parseInt(r['Year']    || r['vintage']   || r['Vintage']) || null,
+      location:  String(r['Location']  || r['location']  || ''),
+      can_drink: parseInt(r['Can Drink']|| r['can_drink'] || r['CanDrink']) || null,
+      drink_by:  parseInt(r['Drink By'] || r['drink_by']  || r['DrinkBy'])  || null,
+      quantity:  parseInt(r['Qty']      || r['quantity']  || r['Quantity']) || 1,
+      score:     parseInt(r['Score']    || r['score'])    || null,
+      notes:     String(r['Notes']      || r['notes']     || ''),
+    }));
+    localStorage.setItem('cave_privee_local', JSON.stringify(wines));
+    updateStats(); renderCellar(); populateVarietalFilter();
+    updateNotice('☁️ Google Sheets sync active — ' + wines.length + ' wines loaded');
+    showSyncBadge('☁️ Loaded from Sheets');
+  } catch(e) {
+    updateNotice('⚠️ Could not reach Google Sheets — using local cache');
+    showSyncBadge('⚠️ Sheets offline');
+    loadLocal();
+  }
+}
+
+async function pushToSheets() {
+  try {
+    await fetch(SHEETS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'save_all', wines })
+    });
+    showSyncBadge('☁️ Saved to Sheets');
+  } catch(e) {
+    showSyncBadge('⚠️ Sheets save failed');
+  }
+}
+
+function loadLocal() {
+  try {
+    const stored = localStorage.getItem('cave_privee_local');
+    if (stored) wines = JSON.parse(stored);
+  } catch(e) {}
+  updateStats(); renderCellar(); populateVarietalFilter();
+}
+
+function saveWines() {
+  // Save locally immediately
+  localStorage.setItem('cave_privee_local', JSON.stringify(wines));
+  updateStats(); populateVarietalFilter();
+  // Debounce Sheets push — wait 1.5s after last change
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(pushToSheets, 1500);
+}
+
+// ── UI helpers ─────────────────────────────────────────────────────────────
+function showSyncBadge(msg) {
+  let badge = document.getElementById('sync-badge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'sync-badge';
+    badge.style.cssText = 'position:fixed;bottom:80px;right:16px;background:rgba(74,15,28,.9);color:#E8C97A;padding:6px 14px;border-radius:20px;font-size:.78rem;z-index:300;transition:opacity .5s';
+    document.body.appendChild(badge);
+  }
+  badge.textContent = msg;
+  badge.style.opacity = '1';
+  setTimeout(() => badge.style.opacity = '0', 2500);
+}
+
+function updateNotice(msg) {
+  const n = document.getElementById('sync-notice');
+  if (n) n.innerHTML = '<strong>' + msg + '</strong>';
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('stat-labels').textContent = wines.length;
+  document.getElementById('stat-bottles').textContent = wines.reduce((s,w) => s + (parseInt(w.quantity)||0), 0);
+  document.getElementById('stat-varietals').textContent = new Set(wines.map(w=>w.varietal).filter(Boolean)).size;
+  document.getElementById('stat-ready').textContent = wines.filter(w => w.can_drink && YEAR >= w.can_drink && (!w.drink_by || YEAR <= w.drink_by)).length;
+}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function switchTab(name) {
+  ['cellar','detail','search','sort','import'].forEach(t => {
+    document.getElementById('view-'+t).style.display = t===name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active', ['cellar','detail','search','sort','import'][i] === name);
+  });
+  if (name === 'sort') renderSortTab();
+  if (name === 'search') { populateSearchVarietal(); runAdvSearch(); }
+  if (name === 'cellar' && selectedWineId) {
+    renderCellar();
+    setTimeout(() => {
+      const card = document.getElementById('card-' + selectedWineId);
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 60);
+  }
+}
+
+// ── Drink status ───────────────────────────────────────────────────────────
+function drinkStatus(w) {
+  if (w.drink_by && YEAR > w.drink_by) return {label:'Past Peak', color:'var(--red)'};
+  if (w.can_drink && YEAR >= w.can_drink) return {label:'Ready Now!', color:'var(--green)'};
+  if (w.can_drink && w.can_drink - YEAR <= 2) return {label:'Ready '+w.can_drink, color:'var(--orange)'};
+  return null;
+}
+
+// ── Cellar render ──────────────────────────────────────────────────────────
+function populateVarietalFilter() {
+  const sel = document.getElementById('filter');
+  const current = sel.value;
+  const varietals = [...new Set(wines.map(w=>w.varietal).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">All varietals</option>' +
+    varietals.map(v=>`<option${v===current?' selected':''}>${v}</option>`).join('');
+}
+
+function renderCellar() {
+  const q  = document.getElementById('search').value.toLowerCase();
+  const fv = document.getElementById('filter').value;
+  const grid = document.getElementById('wine-grid');
+  const filtered = wines.filter(w => {
+    const ms = !q || [w.winery,w.vineyard,w.varietal,w.location,String(w.vintage||'')].some(f=>f?.toLowerCase().includes(q));
+    const mv = !fv || w.varietal === fv;
+    return ms && mv;
+  });
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="empty-icon">🍾</div>
+      <div class="empty-title">${wines.length===0?'Your cellar awaits':'No wines match'}</div>
+      <div class="empty-sub">${wines.length===0?'Tap + to add a bottle, or use the Import tab':'Try a different search or filter'}</div>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(w => {
+    const ds = drinkStatus(w);
+    const ins = insights[w.id];
+    const scoreDisplay = w.score ? w.score : (ins?.rating || '');
+    return `<div id="card-${w.id}" class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
+      <div class="card-head">
+        <div class="card-badge">${esc(w.varietal||'Wine')}</div>
+        <div class="card-right">
+          <div class="card-vintage">${w.vintage||'—'}</div>
+          ${ds?`<div class="status-pill" style="background:${ds.color}">${ds.label}</div>`:''}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-winery">${esc(w.winery)}</div>
+        ${w.vineyard?`<div class="card-vineyard">${esc(w.vineyard)}</div>`:''}
+        <div class="card-meta">
+          ${(w.can_drink||w.drink_by)?`<div class="meta-item">🗓 ${w.can_drink||'?'}–${w.drink_by||'?'}</div>`:''}
+          ${scoreDisplay?`<div class="meta-item">⭐ ${scoreDisplay}/100</div>`:''}
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="card-loc">${w.location?`📦 ${esc(w.location)}`:'<span style="color:#9C7A7A">No location</span>'}</div>
+        <div class="card-qty">${w.quantity||1} btl</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectWine(id) {
+  selectedWineId = id;
+  document.getElementById('tab-detail').disabled = false;
+  renderDetail();
+  switchTab('detail');
+  renderCellar();
+}
+
+// ── Detail render ──────────────────────────────────────────────────────────
+function renderDetail() {
+  const w = wines.find(x=>x.id===selectedWineId);
+  if (!w) return;
+  const ins = insights[w.id];
+  const ds  = drinkStatus(w);
+  document.getElementById('view-detail').innerHTML = `
+    <div class="det-hero">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="det-varietal">${esc(w.varietal||'')}</div>
+          <div class="det-winery">${esc(w.winery)}</div>
+          ${w.vineyard?`<div class="det-vineyard">${esc(w.vineyard)}</div>`:''}
+          <div class="det-vintage">${w.vintage}</div>
+          ${ds?`<div class="status-pill" style="background:${ds.color};display:inline-block;margin-top:5px">${ds.label}</div>`:''}
+        </div>
+        <div class="det-actions">
+          <button class="btn btn-s btn-sm" onclick="openEditModal('${w.id}')">✏️ Edit</button>
+          <button class="btn btn-d btn-sm" onclick="deleteWine('${w.id}')">🗑</button>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-title">AI Sommelier Insights</div>
+      ${ins ? renderInsights(ins, w.id) : `
+        <div style="text-align:center;padding:15px 0">
+          <button class="btn btn-g" id="insights-btn" onclick="getInsights('${w.id}')">✨ Get AI Insights</button>
+          <div style="font-size:.78rem;color:var(--text-light);margin-top:8px">Ratings · Drinking window · Tasting notes · Pairings · Value</div>
+        </div>`}
+    </div>
+    <div class="sec">
+      <div class="sec-title">Bottle Details</div>
+      <div>
+        ${[['Winery',w.winery],['Vineyard',w.vineyard],['Varietal',w.varietal],['Vintage',w.vintage],
+           ['Can Drink',w.can_drink],['Drink By',w.drink_by],
+           ['Score',w.score?w.score+'/100':null],
+           ['Quantity',(w.quantity||1)+' bottle'+((w.quantity||1)>1?'s':'')],
+           ['Location',w.location]
+          ].filter(([,v])=>v).map(([l,v])=>`<div class="df"><span class="dfl">${l}</span><span class="dfv">${esc(String(v))}</span></div>`).join('')}
+      </div>
+    </div>
+    ${w.notes?`<div class="sec"><div class="sec-title">Notes</div><div class="note-box">${esc(w.notes)}</div></div>`:''}
+  `;
+}
+
+function renderInsights(ins, id) {
+  return `
+    <div class="insight-card">
+      <div style="display:flex;align-items:flex-end;gap:13px;margin-bottom:10px">
+        <div><div class="ins-score">${ins.rating||'—'}</div><div class="ins-score-label">Score / 100</div></div>
+        ${ins.verdict?`<div style="flex:1;font-style:italic;color:rgba(245,239,230,.8);font-size:.88rem;line-height:1.5">${esc(ins.verdict)}</div>`:''}
+      </div>
+      ${ins.tastingNotes?`<div style="font-size:.87rem;color:rgba(245,239,230,.85);line-height:1.6">${esc(ins.tastingNotes)}</div>`:''}
+    </div>
+    <div class="dw">
+      ${[['Drink From',ins.drinkFrom,false],['Peak Year',ins.peakYear,true],['Drink By',ins.drinkUntil,false]]
+        .map(([l,y,peak])=>`<div class="dw-item"><div class="dw-year" style="${peak?'color:var(--gold)':''}">${y||'—'}</div><div class="dw-label">${l}</div></div>`)
+        .join('<div style="font-size:1.3rem;color:var(--text-light)">→</div>')}
+    </div>
+    ${ins.foodPairings?.length?`
+      <div style="font-size:.9rem;text-transform:uppercase;letter-spacing:.08em;color:#3D1515;font-weight:700;margin-bottom:7px">Food Pairings</div>
+      <div class="food-tags">${ins.foodPairings.map(f=>`<div class="food-tag">🍽 ${esc(f)}</div>`).join('')}</div>
+    `:''}
+    <div style="margin-top:10px">
+      ${ins.replacementValue?`<div class="df" style="margin-top:8px"><span class="dfl" style="color:#3D1515;font-weight:700;font-size:.9rem;text-transform:uppercase;letter-spacing:.08em">Est. Replacement Value</span><span style="color:var(--gold);font-weight:700;font-size:1.1rem">${ins.replacementValue}</span></div>`:''}
+      <button class="btn btn-s btn-sm" style="margin-top:8px" onclick="getInsights('${id||selectedWineId}')">↻ Refresh</button>
+    </div>
+  `;
+}
+
+// ── AI Insights via Cloudflare Worker ──────────────────────────────────────
+async function getInsights(id) {
+  const w = wines.find(x=>x.id===id);
+  if (!w) return;
+  const btn = document.getElementById('insights-btn');
+  if (btn) btn.innerHTML = '<span class="spinner"></span> Consulting Claude…';
+  try {
+    const res = await fetch(CF_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        winery: w.winery, varietal: w.varietal,
+        vineyard: w.vineyard || '', vintage: w.vintage,
+        can_drink: w.can_drink, drink_by: w.drink_by, score: w.score
+      })
+    });
+    if (!res.ok) throw new Error('Worker error: ' + await res.text());
+    const parsed = await res.json();
+    insights[id] = {
+      rating:          parsed.rating,
+      drinkFrom:       parsed.drinkFrom,
+      drinkUntil:      parsed.drinkUntil,
+      peakYear:        parsed.peakYear,
+      tastingNotes:    parsed.tastingNotes,
+      foodPairings:    parsed.foodPairings,
+      verdict:         parsed.verdict,
+      replacementValue:parsed.replacementValue || null
+    };
+  } catch(e) {
+    alert('Could not get AI insights: ' + e.message);
+  }
+  renderDetail();
+}
+
+// ── CRUD ───────────────────────────────────────────────────────────────────
+function openAddModal() {
+  editingWineId = null;
+  document.getElementById('modal-title').textContent = 'Add to Cellar';
+  document.getElementById('save-btn').textContent = 'Add to Cellar';
+  document.getElementById('delete-btn').style.display = 'none';
+  ['winery','vintage','vineyard','location','can-drink','drink-by','score','notes'].forEach(f => {
+    const el = document.getElementById('f-'+f);
+    if (el) el.value = '';
+  });
+  document.getElementById('f-varietal').value = '';
+  document.getElementById('f-quantity').value = '1';
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function openEditModal(id) {
+  const w = wines.find(x=>x.id===id);
+  if (!w) return;
+  editingWineId = id;
+  document.getElementById('modal-title').textContent = 'Edit Wine';
+  document.getElementById('save-btn').textContent = 'Save Changes';
+  document.getElementById('delete-btn').style.display = 'inline-flex';
+  document.getElementById('f-winery').value    = w.winery||'';
+  document.getElementById('f-vintage').value   = w.vintage||'';
+  document.getElementById('f-vineyard').value  = w.vineyard||'';
+  document.getElementById('f-varietal').value  = w.varietal||'';
+  document.getElementById('f-location').value  = w.location||'';
+  document.getElementById('f-can-drink').value = w.can_drink||'';
+  document.getElementById('f-drink-by').value  = w.drink_by||'';
+  document.getElementById('f-quantity').value  = w.quantity||1;
+  document.getElementById('f-score').value     = w.score||'';
+  document.getElementById('f-notes').value     = w.notes||'';
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+function saveWine() {
+  const winery  = document.getElementById('f-winery').value.trim();
+  const vintage = parseInt(document.getElementById('f-vintage').value);
+  const varietal= document.getElementById('f-varietal').value;
+  if (!winery || !vintage || !varietal) { alert('Please fill in Winery, Vintage, and Varietal.'); return; }
+  const wine = {
+    winery, vintage, varietal,
+    vineyard:  document.getElementById('f-vineyard').value.trim(),
+    location:  document.getElementById('f-location').value.trim().toUpperCase(),
+    can_drink: parseInt(document.getElementById('f-can-drink').value)||null,
+    drink_by:  parseInt(document.getElementById('f-drink-by').value)||null,
+    quantity:  parseInt(document.getElementById('f-quantity').value)||1,
+    score:     parseInt(document.getElementById('f-score').value)||null,
+    notes:     document.getElementById('f-notes').value.trim(),
+  };
+  if (editingWineId) {
+    const idx = wines.findIndex(w=>w.id===editingWineId);
+    wines[idx] = {...wines[idx], ...wine};
+    if (selectedWineId===editingWineId) renderDetail();
+  } else {
+    wine.id = Date.now()+'-'+Math.random().toString(36).slice(2);
+    wines.push(wine);
+  }
+  saveWines(); renderCellar(); closeModal();
+}
+
+function deleteCurrentEdit() { if (editingWineId) { deleteWine(editingWineId); closeModal(); } }
+
+function deleteWine(id) {
+  const w = wines.find(x=>x.id===id);
+  if (!confirm(`Remove "${w?.winery} ${w?.vintage}" from your cellar?`)) return;
+  wines = wines.filter(x=>x.id!==id);
+  if (selectedWineId===id) {
+    selectedWineId = null;
+    document.getElementById('tab-detail').disabled = true;
+    switchTab('cellar');
+  }
+  saveWines(); renderCellar();
+}
+
+// ── CSV Export ─────────────────────────────────────────────────────────────
+function exportCSV() {
+  const headers = ['Winery','Varietal','Vineyard','Year','Location','Can Drink','Drink By','Qty','Score','Notes'];
+  function csvEsc(v) {
+    if (v === null || v === undefined || v === '') return '';
+    const s = String(v);
+    return (s.includes(',') || s.includes('"') || s.includes('\n')) ? '"' + s.replace(/"/g,'""') + '"' : s;
+  }
+  const rows = wines.map(w => [
+    csvEsc(w.winery),csvEsc(w.varietal),csvEsc(w.vineyard),csvEsc(w.vintage),
+    csvEsc(w.location),csvEsc(w.can_drink),csvEsc(w.drink_by),
+    csvEsc(w.quantity||1),csvEsc(w.score),csvEsc(w.notes)
+  ].join(','));
+  const csv  = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'cave-privee-' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showSyncBadge('Downloaded ' + wines.length + ' wines');
+}
+
+// ── Import ─────────────────────────────────────────────────────────────────
+const COL_MAP = {
+  winery:    ['winery','wine','producer'],
+  varietal:  ['varietal','variety','grape'],
+  vineyard:  ['vineyard','appellation','block'],
+  vintage:   ['vintage','year','yr'],
+  location:  ['location','locatio','bin','rack'],
+  can_drink: ['can drink','candrink','drink from','drink after'],
+  drink_by:  ['drink by','drinkby','drink until','consume by'],
+  quantity:  ['qty','quantity','bottles'],
+  score:     ['score','rating','points'],
+};
+
+function findColIdx(headers, candidates) {
+  const h = headers.map(x => String(x||'').toLowerCase().trim());
+  for (const c of candidates) {
+    const idx = h.findIndex(col => col.includes(c));
+    if (idx !== -1) return idx;
+  }
+  return -1;
+}
+
+function parseRows(rows, headers) {
+  const idx = {};
+  for (const [field, cands] of Object.entries(COL_MAP)) idx[field] = findColIdx(headers, cands);
+  const result = [];
+  for (const row of rows) {
+    const get = f => {
+      const i = idx[f]; if (i < 0) return '';
+      const v = Array.isArray(row) ? row[i] : Object.values(row)[i];
+      return v != null ? String(v).trim() : '';
+    };
+    const winery = get('winery').replace(/`/g,'').trim();
+    if (!winery || winery.toLowerCase()==='winery') continue;
+    const vintage = parseInt(get('vintage'));
+    if (!vintage || vintage < 1900 || vintage > 2100) continue;
+    const scoreRaw = parseInt(get('score'));
+    result.push({
+      id: Date.now()+'-'+Math.random().toString(36).slice(2),
+      winery, varietal: get('varietal'), vineyard: get('vineyard'), vintage,
+      location: get('location').toUpperCase().replace(/`/g,'').trim(),
+      can_drink: parseInt(get('can_drink'))||null,
+      drink_by:  parseInt(get('drink_by'))||null,
+      quantity:  parseInt(get('quantity'))||1,
+      score: isNaN(scoreRaw)||scoreRaw<50||scoreRaw>100 ? null : scoreRaw,
+      notes: '',
+    });
+  }
+  return result;
+}
+
+function handleDrop(ev) {
+  ev.preventDefault();
+  document.getElementById('drop-area').classList.remove('drag-over');
+  const file = ev.dataTransfer.files?.[0];
+  if (file) processFile(file);
+}
+
+function handleFileInput(ev) {
+  const file = ev.target.files?.[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb   = XLSX.read(data, {type:'array'});
+      const sheet= wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''});
+      let headerIdx = 0;
+      for (let i=0; i<Math.min(10,rows.length); i++) {
+        const rowStr = rows[i].map(c=>String(c).toLowerCase()).join(' ');
+        if (rowStr.includes('winery') || rowStr.includes('varietal')) { headerIdx = i; break; }
+      }
+      importPreviewWines = parseRows(rows.slice(headerIdx+1), rows[headerIdx]);
+      renderImportPreview();
+    } catch(err) { alert('Could not read file. Please try saving as CSV.'); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderImportPreview() {
+  const area = document.getElementById('import-preview-area');
+  if (!importPreviewWines?.length) {
+    area.innerHTML = '<p style="color:var(--red);margin-top:14px">No wines found.</p>';
+    return;
+  }
+  const preview = importPreviewWines.slice(0,8);
+  area.innerHTML = `
+    <div style="margin-top:18px">
+      <div class="prev-header">
+        <div class="prev-count">Found <span>${importPreviewWines.length}</span> wines ready to import</div>
+        <button class="btn btn-s btn-sm" onclick="importPreviewWines=null;document.getElementById('import-preview-area').innerHTML=''">✕ Clear</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>${['Winery','Varietal','Vineyard','Vintage','Location','Qty'].map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+          <tbody>${preview.map(w=>`<tr><td>${esc(w.winery)}</td><td>${esc(w.varietal)}</td><td>${esc(w.vineyard)}</td><td>${w.vintage}</td><td>${esc(w.location)}</td><td>${w.quantity}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>
+      ${importPreviewWines.length>8?`<div style="font-size:.79rem;color:var(--text-light);margin-bottom:12px">…and ${importPreviewWines.length-8} more</div>`:''}
+      <div class="imp-opts">
+        <div class="imp-opt-label">Import Mode</div>
+        <div class="imp-opt-row">
+          <label><input type="radio" name="imp-mode" value="append" checked onchange="importMode='append'"/> Add to existing cellar</label>
+          <label><input type="radio" name="imp-mode" value="replace" onchange="importMode='replace'"/> Replace all — start fresh</label>
+        </div>
+      </div>
+      <div class="btn-row" id="imp-btn-row">
+        <button class="btn btn-p" onclick="doImport()">📥 Import ${importPreviewWines.length} wines</button>
+        <button class="btn btn-s" onclick="importPreviewWines=null;document.getElementById('import-preview-area').innerHTML=''">Cancel</button>
+      </div>
+    </div>`;
+}
+
+async function doImport() {
+  if (!importPreviewWines?.length) return;
+  if (importMode==='replace') wines = [];
+  importPreviewWines.forEach(w => wines.push(w));
+  saveWines(); renderCellar(); importPreviewWines = null;
+  document.getElementById('import-preview-area').innerHTML =
+    `<div class="imp-success">✅ <strong>Import complete!</strong> Switch to the Cellar tab to browse.</div>`;
+}
+
+// ── Sort ───────────────────────────────────────────────────────────────────
+let sortField = 'winery', sortDir = 'asc';
+
+function setSortField(field) {
+  sortField = field;
+  document.querySelectorAll('.sort-btn[id^="sort-"]').forEach(b => { if (!b.id.startsWith('sort-dir')) b.classList.remove('active'); });
+  document.getElementById('sort-' + field).classList.add('active');
+  renderSortTab();
+}
+
+function setSortDir(dir) {
+  sortDir = dir;
+  document.getElementById('sort-dir-asc').classList.toggle('active', dir === 'asc');
+  document.getElementById('sort-dir-desc').classList.toggle('active', dir === 'desc');
+  renderSortTab();
+}
+
+function renderSortTab() {
+  const fieldLabels = {winery:'Winery', varietal:'Varietal', vintage:'Vintage', can_drink:'Can Drink', drink_by:'Drink By', quantity:'Quantity', location:'Location'};
+  const sorted = [...wines].sort((a, b) => {
+    let va = a[sortField] ?? (sortDir==='asc' ? Infinity : -Infinity);
+    let vb = b[sortField] ?? (sortDir==='asc' ? Infinity : -Infinity);
+    if (typeof va === 'string') va = va.toLowerCase();
+    if (typeof vb === 'string') vb = vb.toLowerCase();
+    if (va < vb) return sortDir==='asc' ? -1 : 1;
+    if (va > vb) return sortDir==='asc' ? 1 : -1;
+    return 0;
+  });
+  document.getElementById('sort-summary').textContent =
+    `Sorted by ${fieldLabels[sortField]} · ${sortDir==='asc'?'A → Z / Low → High':'Z → A / High → Low'} · ${sorted.length} wines`;
+  document.getElementById('sort-summary').style.cssText = 'background:var(--cream);border-radius:var(--r);padding:12px 16px;font-size:.88rem;color:#3D1515;font-weight:600;border-left:3px solid var(--gold)';
+  document.getElementById('sort-results-grid').innerHTML = sorted.map(w => {
+    const ds = drinkStatus(w);
+    return `<div class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
+      <div class="card-head">
+        <div class="card-badge">${esc(w.varietal||'Wine')}</div>
+        <div class="card-right">
+          <div class="card-vintage">${w.vintage||'—'}</div>
+          ${ds?`<div class="status-pill" style="background:${ds.color}">${ds.label}</div>`:''}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-winery">${esc(w.winery)}</div>
+        ${w.vineyard?`<div class="card-vineyard">${esc(w.vineyard)}</div>`:''}
+        <div class="card-meta">
+          ${(w.can_drink||w.drink_by)?`<div class="meta-item">🗓 ${w.can_drink||'?'}–${w.drink_by||'?'}</div>`:''}
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="card-loc">${w.location?`📦 ${esc(w.location)}`:'<span style="color:#9C7A7A">No location</span>'}</div>
+        <div class="card-qty">${w.quantity||1} btl</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Advanced Search ────────────────────────────────────────────────────────
+function populateSearchVarietal() {
+  const sel = document.getElementById('s-varietal');
+  const current = sel.value;
+  const varietals = [...new Set(wines.map(w=>w.varietal).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">All varietals</option>' +
+    varietals.map(v=>`<option${v===current?' selected':''}>${v}</option>`).join('');
+}
+
+function runAdvSearch() {
+  const winery     = document.getElementById('s-winery').value.toLowerCase().trim();
+  const varietal   = document.getElementById('s-varietal').value;
+  const vintageMin = parseInt(document.getElementById('s-vintage-min').value) || null;
+  const vintageMax = parseInt(document.getElementById('s-vintage-max').value) || null;
+  const canMin     = parseInt(document.getElementById('s-candrink-min').value) || null;
+  const canMax     = parseInt(document.getElementById('s-candrink-max').value) || null;
+  const dbMin      = parseInt(document.getElementById('s-drinkby-min').value) || null;
+  const dbMax      = parseInt(document.getElementById('s-drinkby-max').value) || null;
+  const hasFilter  = winery||varietal||vintageMin||vintageMax||canMin||canMax||dbMin||dbMax;
+  const results    = wines.filter(w => {
+    if (winery    && !w.winery?.toLowerCase().includes(winery)) return false;
+    if (varietal  && w.varietal !== varietal) return false;
+    if (vintageMin && (w.vintage||0)   < vintageMin) return false;
+    if (vintageMax && (w.vintage||0)   > vintageMax) return false;
+    if (canMin    && (w.can_drink||0)  < canMin)     return false;
+    if (canMax    && (w.can_drink||0)  > canMax)     return false;
+    if (dbMin     && (w.drink_by||0)   < dbMin)      return false;
+    if (dbMax     && (w.drink_by||0)   > dbMax)      return false;
+    return true;
+  });
+  const countEl = document.getElementById('search-results-count');
+  const grid    = document.getElementById('search-results-grid');
+  if (!hasFilter) {
+    countEl.style.display = 'none';
+    grid.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-light);font-style:italic">Enter search criteria above</div>';
+    return;
+  }
+  countEl.style.display = 'block';
+  countEl.textContent = results.length + ' wine' + (results.length !== 1 ? 's' : '') + ' found';
+  if (results.length === 0) {
+    grid.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-light);font-style:italic">No wines match</div>';
+    return;
+  }
+  grid.innerHTML = results.map(w => {
+    const ds = drinkStatus(w);
+    return `<div class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
+      <div class="card-head">
+        <div class="card-badge">${esc(w.varietal||'Wine')}</div>
+        <div class="card-right">
+          <div class="card-vintage">${w.vintage||'—'}</div>
+          ${ds?`<div class="status-pill" style="background:${ds.color}">${ds.label}</div>`:''}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-winery">${esc(w.winery)}</div>
+        ${w.vineyard?`<div class="card-vineyard">${esc(w.vineyard)}</div>`:''}
+        <div class="card-meta">
+          ${(w.can_drink||w.drink_by)?`<div class="meta-item">🗓 ${w.can_drink||'?'}–${w.drink_by||'?'}</div>`:''}
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="card-loc">${w.location?`📦 ${esc(w.location)}`:'<span style="color:#9C7A7A">No location</span>'}</div>
+        <div class="card-qty">${w.quantity||1} btl</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function clearAdvSearch() {
+  ['s-winery','s-vintage-min','s-vintage-max','s-candrink-min','s-candrink-max','s-drinkby-min','s-drinkby-max']
+    .forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('s-varietal').value = '';
+  runAdvSearch();
+}
+
+// ── Utility ────────────────────────────────────────────────────────────────
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+// Load local cache immediately so UI is instant, then sync from Sheets
+loadLocal();
+syncFromSheets();
+</script>
+</body>
+</html>
