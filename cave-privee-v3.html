@@ -539,12 +539,26 @@ function renderCellar() {
   }).join('');
 }
 
+let previousTab = 'cellar';
+
 function selectWine(id) {
+  const tabs = ['cellar','detail','search','sort','import'];
+  const activeIdx = [...document.querySelectorAll('.tab')].findIndex(t => t.classList.contains('active'));
+  previousTab = tabs[activeIdx] || 'cellar';
   selectedWineId = id;
   document.getElementById('tab-detail').disabled = false;
   renderDetail();
   switchTab('detail');
-  renderCellar();
+  if (previousTab === 'cellar') renderCellar();
+}
+
+function goBack() {
+  switchTab(previousTab);
+  setTimeout(() => {
+    const card = document.getElementById('card-' + selectedWineId) ||
+                 document.querySelector('[id^="card-"]');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 80);
 }
 
 // ── Detail render ──────────────────────────────────────────────────────────
@@ -564,6 +578,7 @@ function renderDetail() {
           ${ds?`<div class="status-pill" style="background:${ds.color};display:inline-block;margin-top:5px">${ds.label}</div>`:''}
         </div>
         <div class="det-actions">
+          <button class="btn btn-s btn-sm" onclick="goBack()">← Back</button>
           <button class="btn btn-s btn-sm" onclick="openEditModal('${w.id}')">✏️ Edit</button>
           <button class="btn btn-d btn-sm" onclick="deleteWine('${w.id}')">🗑</button>
         </div>
@@ -910,7 +925,7 @@ function renderSortTab() {
   document.getElementById('sort-summary').style.cssText = 'background:var(--cream);border-radius:var(--r);padding:12px 16px;font-size:.88rem;color:#3D1515;font-weight:600;border-left:3px solid var(--gold)';
   document.getElementById('sort-results-grid').innerHTML = sorted.map(w => {
     const ds = drinkStatus(w);
-    return `<div class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
+    return `<div id="card-${w.id}" class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
       <div class="card-head">
         <div class="card-badge">${esc(w.varietal||'Wine')}</div>
         <div class="card-right">
@@ -993,7 +1008,7 @@ function runAdvSearch() {
   }
   grid.innerHTML = results.map(w => {
     const ds = drinkStatus(w);
-    return `<div class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
+    return `<div id="card-${w.id}" class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
       <div class="card-head">
         <div class="card-badge">${esc(w.varietal||'Wine')}</div>
         <div class="card-right">
