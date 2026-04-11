@@ -303,6 +303,7 @@ tr:hover td{background:var(--cream)}
   </div>
 
   <button class="fab" onclick="openAddModal()" title="Add wine">＋</button>
+  <div style="position:fixed;bottom:8px;left:12px;font-size:.65rem;color:var(--text-light);opacity:.5;font-family:'Cormorant Garamond',serif;z-index:99;pointer-events:none">v7 · 2026-04-11</div>
 
   <div class="overlay" id="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
     <div class="modal">
@@ -540,25 +541,27 @@ function renderCellar() {
 }
 
 let previousTab = 'cellar';
+let savedScrollY = 0;
 
 function selectWine(id) {
   const tabs = ['cellar','detail','search','sort','import'];
   const activeIdx = [...document.querySelectorAll('.tab')].findIndex(t => t.classList.contains('active'));
   previousTab = tabs[activeIdx] || 'cellar';
+  savedScrollY = window.scrollY; // save scroll position before leaving
   selectedWineId = id;
   document.getElementById('tab-detail').disabled = false;
   renderDetail();
   switchTab('detail');
   if (previousTab === 'cellar') renderCellar();
+  window.scrollTo(0, 0);
 }
 
 function goBack() {
   switchTab(previousTab);
+  // Restore scroll position after tab re-renders
   setTimeout(() => {
-    const card = document.getElementById('card-' + selectedWineId) ||
-                 document.querySelector('[id^="card-"]');
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 80);
+    window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+  }, 50);
 }
 
 // ── Detail render ──────────────────────────────────────────────────────────
