@@ -199,10 +199,11 @@ tr:hover td{background:var(--cream)}
           <input class="search-box" id="s-winery" placeholder="e.g. Williams Selyem" oninput="runAdvSearch()" style="width:100%"/>
         </div>
         <div>
-          <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700;display:block;margin-bottom:6px">Varietal</label>
-          <select class="filter-sel" id="s-varietal" onchange="runAdvSearch()" style="width:100%">
-            <option value="">All varietals</option>
-          </select>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <label style="font-size:.88rem;text-transform:uppercase;letter-spacing:.09em;color:#3D1515;font-weight:700">Varietal</label>
+            <button onclick="clearVarietalCheckboxes()" class="btn btn-s btn-sm" style="font-size:.75rem;padding:3px 10px">Clear</button>
+          </div>
+          <div id="varietal-checkboxes" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--cream);border-radius:var(--r);padding:12px;border:1.5px solid var(--cream-dark);max-height:220px;overflow-y:auto"></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
@@ -538,12 +539,26 @@ function renderCellar() {
   }).join('');
 }
 
+let previousTab = 'cellar';
+
 function selectWine(id) {
+  const tabs = ['cellar','detail','search','sort','import'];
+  const activeIdx = [...document.querySelectorAll('.tab')].findIndex(t => t.classList.contains('active'));
+  previousTab = tabs[activeIdx] || 'cellar';
   selectedWineId = id;
   document.getElementById('tab-detail').disabled = false;
   renderDetail();
   switchTab('detail');
-  renderCellar();
+  if (previousTab === 'cellar') renderCellar();
+}
+
+function goBack() {
+  switchTab(previousTab);
+  setTimeout(() => {
+    const card = document.getElementById('card-' + selectedWineId) ||
+                 document.querySelector('[id^="card-"]');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 80);
 }
 
 // ── Detail render ──────────────────────────────────────────────────────────
@@ -563,6 +578,7 @@ function renderDetail() {
           ${ds?`<div class="status-pill" style="background:${ds.color};display:inline-block;margin-top:5px">${ds.label}</div>`:''}
         </div>
         <div class="det-actions">
+          <button class="btn btn-s btn-sm" onclick="goBack()">← Back</button>
           <button class="btn btn-s btn-sm" onclick="openEditModal('${w.id}')">✏️ Edit</button>
           <button class="btn btn-d btn-sm" onclick="deleteWine('${w.id}')">🗑</button>
         </div>
@@ -909,7 +925,7 @@ function renderSortTab() {
   document.getElementById('sort-summary').style.cssText = 'background:var(--cream);border-radius:var(--r);padding:12px 16px;font-size:.88rem;color:#3D1515;font-weight:600;border-left:3px solid var(--gold)';
   document.getElementById('sort-results-grid').innerHTML = sorted.map(w => {
     const ds = drinkStatus(w);
-    return `<div class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
+    return `<div id="card-${w.id}" class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
       <div class="card-head">
         <div class="card-badge">${esc(w.varietal||'Wine')}</div>
         <div class="card-right">
@@ -934,32 +950,47 @@ function renderSortTab() {
 
 // ── Advanced Search ────────────────────────────────────────────────────────
 function populateSearchVarietal() {
-  const sel = document.getElementById('s-varietal');
-  const current = sel.value;
+  const container = document.getElementById('varietal-checkboxes');
+  if (!container) return;
   const varietals = [...new Set(wines.map(w=>w.varietal).filter(Boolean))].sort();
-  sel.innerHTML = '<option value="">All varietals</option>' +
-    varietals.map(v=>`<option${v===current?' selected':''}>${v}</option>`).join('');
+  const checked = getCheckedVarietals();
+  container.innerHTML = varietals.map(v => `
+    <label style="display:flex;align-items:center;gap:7px;font-size:.92rem;color:#3D1515;font-weight:600;cursor:pointer">
+      <input type="checkbox" value="${esc(v)}" onchange="runAdvSearch()" ${checked.has(v)?'checked':''}
+        style="accent-color:var(--bur);width:15px;height:15px;flex-shrink:0"/>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v)}</span>
+    </label>`).join('');
+}
+
+function getCheckedVarietals() {
+  const boxes = document.querySelectorAll('#varietal-checkboxes input[type=checkbox]:checked');
+  return new Set([...boxes].map(b => b.value));
+}
+
+function clearVarietalCheckboxes() {
+  document.querySelectorAll('#varietal-checkboxes input[type=checkbox]').forEach(b => b.checked = false);
+  runAdvSearch();
 }
 
 function runAdvSearch() {
   const winery     = document.getElementById('s-winery').value.toLowerCase().trim();
-  const varietal   = document.getElementById('s-varietal').value;
+  const varietals  = getCheckedVarietals();
   const vintageMin = parseInt(document.getElementById('s-vintage-min').value) || null;
   const vintageMax = parseInt(document.getElementById('s-vintage-max').value) || null;
   const canMin     = parseInt(document.getElementById('s-candrink-min').value) || null;
   const canMax     = parseInt(document.getElementById('s-candrink-max').value) || null;
   const dbMin      = parseInt(document.getElementById('s-drinkby-min').value) || null;
   const dbMax      = parseInt(document.getElementById('s-drinkby-max').value) || null;
-  const hasFilter  = winery||varietal||vintageMin||vintageMax||canMin||canMax||dbMin||dbMax;
+  const hasFilter  = winery||varietals.size||vintageMin||vintageMax||canMin||canMax||dbMin||dbMax;
   const results    = wines.filter(w => {
-    if (winery    && !w.winery?.toLowerCase().includes(winery)) return false;
-    if (varietal  && w.varietal !== varietal) return false;
-    if (vintageMin && (w.vintage||0)   < vintageMin) return false;
-    if (vintageMax && (w.vintage||0)   > vintageMax) return false;
-    if (canMin    && (w.can_drink||0)  < canMin)     return false;
-    if (canMax    && (w.can_drink||0)  > canMax)     return false;
-    if (dbMin     && (w.drink_by||0)   < dbMin)      return false;
-    if (dbMax     && (w.drink_by||0)   > dbMax)      return false;
+    if (winery              && !w.winery?.toLowerCase().includes(winery)) return false;
+    if (varietals.size      && !varietals.has(w.varietal))                return false;
+    if (vintageMin && (w.vintage||0)  < vintageMin) return false;
+    if (vintageMax && (w.vintage||0)  > vintageMax) return false;
+    if (canMin    && (w.can_drink||0) < canMin)     return false;
+    if (canMax    && (w.can_drink||0) > canMax)     return false;
+    if (dbMin     && (w.drink_by||0)  < dbMin)      return false;
+    if (dbMax     && (w.drink_by||0)  > dbMax)      return false;
     return true;
   });
   const countEl = document.getElementById('search-results-count');
@@ -977,7 +1008,7 @@ function runAdvSearch() {
   }
   grid.innerHTML = results.map(w => {
     const ds = drinkStatus(w);
-    return `<div class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
+    return `<div id="card-${w.id}" class="card${selectedWineId===w.id?' sel':''}" onclick="selectWine('${w.id}')">
       <div class="card-head">
         <div class="card-badge">${esc(w.varietal||'Wine')}</div>
         <div class="card-right">
@@ -1003,8 +1034,7 @@ function runAdvSearch() {
 function clearAdvSearch() {
   ['s-winery','s-vintage-min','s-vintage-max','s-candrink-min','s-candrink-max','s-drinkby-min','s-drinkby-max']
     .forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('s-varietal').value = '';
-  runAdvSearch();
+  clearVarietalCheckboxes();
 }
 
 // ── Utility ────────────────────────────────────────────────────────────────
