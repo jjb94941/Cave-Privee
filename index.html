@@ -154,7 +154,7 @@ tr:hover td{background:var(--cream)}
         <div class="logo-icon">🍷</div>
         <div>
           <div class="logo-title">Cave Privée</div>
-          <div class="logo-sub">Personal Wine Cellar <span style="color:var(--gold-light);font-size:.75rem;letter-spacing:.08em;font-weight:600">· v9</span></div>
+          <div class="logo-sub">Personal Wine Cellar <span style="color:var(--gold-light);font-size:.75rem;letter-spacing:.08em;font-weight:600">· v10</span></div>
         </div>
       </div>
       <div class="header-stats">
@@ -305,7 +305,7 @@ tr:hover td{background:var(--cream)}
   </div>
 
   <button class="fab" onclick="openAddModal()" title="Add wine">＋</button>
-  <div style="position:fixed;bottom:8px;left:12px;font-size:.65rem;color:var(--text-light);opacity:.5;font-family:'Cormorant Garamond',serif;z-index:99;pointer-events:none">v9 · 2026-04-26</div>
+  <div style="position:fixed;bottom:8px;left:12px;font-size:.65rem;color:var(--text-light);opacity:.5;font-family:'Cormorant Garamond',serif;z-index:99;pointer-events:none">v10 · 2026-04-26</div>
 
   <div class="overlay" id="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
     <div class="modal">
@@ -709,11 +709,12 @@ function openEditModal(id) {
 
 function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 
-function saveWine() {
+async function saveWine() {
   const winery  = document.getElementById('f-winery').value.trim();
   const vintage = parseInt(document.getElementById('f-vintage').value);
   const varietal= document.getElementById('f-varietal').value;
   if (!winery || !vintage || !varietal) { alert('Please fill in Winery, Vintage, and Varietal.'); return; }
+
   const wine = {
     winery, vintage, varietal,
     vineyard:  document.getElementById('f-vineyard').value.trim(),
@@ -724,6 +725,48 @@ function saveWine() {
     score:     parseInt(document.getElementById('f-score').value)||null,
     notes:     document.getElementById('f-notes').value.trim(),
   };
+
+  // For new wines, always look up drinking window and confirm
+  if (!editingWineId) {
+    const saveBtn = document.getElementById('save-btn');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner"></span> Looking up…';
+    try {
+      const res = await fetch(CF_WORKER, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'lookup_drinking_window',
+          winery: wine.winery,
+          varietal: wine.varietal,
+          vineyard: wine.vineyard,
+          vintage: wine.vintage
+        })
+      });
+      if (res.ok) {
+        const lookup = await res.json();
+        // Show confirmation popup
+        const msg = `Suggested drinking window for ${wine.winery} ${wine.vintage}:\n\n` +
+          `Can Drink From: ${lookup.canDrink}\n` +
+          `Drink By: ${lookup.drinkBy}\n\n` +
+          `${lookup.source}\n\n` +
+          `(Confidence: ${lookup.confidence})\n\n` +
+          `Use these values?`;
+        if (confirm(msg)) {
+          wine.can_drink = lookup.canDrink;
+          wine.drink_by  = lookup.drinkBy;
+          // Update the form fields too
+          document.getElementById('f-can-drink').value = lookup.canDrink;
+          document.getElementById('f-drink-by').value  = lookup.drinkBy;
+        }
+      }
+    } catch(e) {
+      // Silent fail — just save without lookup
+    }
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = 'Add to Cellar';
+  }
+
   if (editingWineId) {
     const idx = wines.findIndex(w=>w.id===editingWineId);
     wines[idx] = {...wines[idx], ...wine};
