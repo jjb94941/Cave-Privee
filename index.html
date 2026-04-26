@@ -154,7 +154,7 @@ tr:hover td{background:var(--cream)}
         <div class="logo-icon">🍷</div>
         <div>
           <div class="logo-title">Cave Privée</div>
-          <div class="logo-sub">Personal Wine Cellar <span style="color:var(--gold-light);font-size:.75rem;letter-spacing:.08em;font-weight:600">· v10</span></div>
+          <div class="logo-sub">Personal Wine Cellar <span style="color:var(--gold-light);font-size:.75rem;letter-spacing:.08em;font-weight:600">· v11</span></div>
         </div>
       </div>
       <div class="header-stats">
@@ -305,7 +305,7 @@ tr:hover td{background:var(--cream)}
   </div>
 
   <button class="fab" onclick="openAddModal()" title="Add wine">＋</button>
-  <div style="position:fixed;bottom:8px;left:12px;font-size:.65rem;color:var(--text-light);opacity:.5;font-family:'Cormorant Garamond',serif;z-index:99;pointer-events:none">v10 · 2026-04-26</div>
+  <div style="position:fixed;bottom:8px;left:12px;font-size:.65rem;color:var(--text-light);opacity:.5;font-family:'Cormorant Garamond',serif;z-index:99;pointer-events:none">v11 · 2026-04-26</div>
 
   <div class="overlay" id="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
     <div class="modal">
@@ -599,6 +599,15 @@ function renderDetail() {
         </div>`}
     </div>
     <div class="sec">
+      <div class="sec-title">Drinking Window</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div style="font-size:.95rem;color:var(--text-mid)">
+          ${w.can_drink||w.drink_by ? `Can drink: <strong>${w.can_drink||'?'}</strong> &nbsp;·&nbsp; Drink by: <strong>${w.drink_by||'?'}</strong>` : '<em>No drinking window set</em>'}
+        </div>
+        <button class="btn btn-s btn-sm" id="lookup-btn-${w.id}" onclick="lookupDrinkingWindow('${w.id}')">🔍 Look up dates</button>
+      </div>
+    </div>
+    <div class="sec">
       <div class="sec-title">Bottle Details</div>
       <div>
         ${[['Winery',w.winery],['Vineyard',w.vineyard],['Varietal',w.varietal],['Vintage',w.vintage],
@@ -636,6 +645,60 @@ function renderInsights(ins, id) {
       <button class="btn btn-s btn-sm" style="margin-top:8px" onclick="getInsights('${id||selectedWineId}')">↻ Refresh</button>
     </div>
   `;
+}
+
+// ── Drinking window lookup ─────────────────────────────────────────────────
+async function lookupDrinkingWindow(id) {
+  const w = wines.find(x=>x.id===id);
+  if (!w) return;
+  const btn = document.getElementById('lookup-btn-' + id);
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner" style="border-top-color:var(--bur)"></span> Looking up…'; }
+  try {
+    const res = await fetch(CF_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'lookup_drinking_window',
+        winery: w.winery, varietal: w.varietal,
+        vineyard: w.vineyard, vintage: w.vintage
+      })
+    });
+    if (!res.ok) throw new Error('Worker error');
+    const lookup = await res.json();
+
+    // Build confirmation message showing current vs suggested
+    const currentCan  = w.can_drink || 'not set';
+    const currentBy   = w.drink_by  || 'not set';
+    const changed = (lookup.canDrink !== w.can_drink) || (lookup.drinkBy !== w.drink_by);
+
+    const msg = `Drinking window for ${w.winery} ${w.vintage}:
+
+` +
+      `Current:   Can drink ${currentCan} · Drink by ${currentBy}
+` +
+      `Suggested: Can drink ${lookup.canDrink} · Drink by ${lookup.drinkBy}
+
+` +
+      `${lookup.source}
+(Confidence: ${lookup.confidence})
+
+` +
+      (changed ? 'Update to suggested values?' : 'Already matches — no change needed.');
+
+    if (changed && confirm(msg)) {
+      const idx = wines.findIndex(x=>x.id===id);
+      wines[idx].can_drink = lookup.canDrink;
+      wines[idx].drink_by  = lookup.drinkBy;
+      saveWines();
+      renderDetail();
+      showSyncBadge('✅ Drinking window updated');
+    } else if (!changed) {
+      alert(msg);
+    }
+  } catch(e) {
+    alert('Could not look up drinking window: ' + e.message);
+  }
+  if (btn) { btn.disabled = false; btn.innerHTML = '🔍 Look up dates'; }
 }
 
 // ── AI Insights via Cloudflare Worker ──────────────────────────────────────
